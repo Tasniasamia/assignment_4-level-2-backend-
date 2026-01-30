@@ -90,7 +90,7 @@ const login = async (
 ) => {
 console.log("login payload",payload)
 
-const responsedata=await fetch(`http://localhost:5750/api/auth/sign-in/email`,{
+const responsedata=await fetch(`${process.env.API_URL}/api/auth/sign-in/email`,{
   method: "POST",
   headers: {
     "Content-Type": "application/json",

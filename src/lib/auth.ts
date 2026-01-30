@@ -17,6 +17,9 @@ export const auth = betterAuth({
     database: prismaAdapter(prisma, {
         provider: "postgresql", 
     }),
+    advanced: {
+        cookiePrefix: "better-auth"
+    },
     emailAndPassword: { 
         enabled: true, 
         requireEmailVerification: true,

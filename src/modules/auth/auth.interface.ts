@@ -6,3 +6,12 @@ email:string,
 password:string,
 role:ROLE
 }
+
+export interface loginData{
+email:string,
+password:string,
+role:ROLE
+}
+
+
+  

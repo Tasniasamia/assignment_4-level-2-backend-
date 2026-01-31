@@ -8,10 +8,18 @@ import { ROLE } from "../../../generated/prisma/enums";
 const resister = async (payload: resisterData) => {
   const data = await auth.api.signUpEmail({ body: payload });
 
-  if (data?.user) {
-    return {
+  if (data?.user?.id) {
+   const updateData= await prisma.user.update({
+      where: {
+        id: data?.user?.id as string,
+      },
+      data: {
+        role: payload.role,
+      },
+    });
+        return {
       success: true,
-      data,
+      data:updateData,
       message: "User Registered Successfully",
     };
   }

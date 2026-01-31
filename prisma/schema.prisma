@@ -25,7 +25,10 @@ enum ROLE {
   provider
   admin
 }
-
+enum USERSTATUS{
+  suspend
+  activate
+}
 
 
 
@@ -40,9 +43,10 @@ model User {
   sessions      Session[]
   accounts      Account[]
   role          ROLE      @default(customer)
-
+  status        USERSTATUS @default(activate)
+  ProviderProfiles ProviderProfiles?
   @@unique([email])
-  @@map("user")
+  @@map("users")
 }
 
 model Session {
@@ -90,4 +94,20 @@ model Verification {
 
   @@index([identifier])
   @@map("verification")
+}
+
+
+model ProviderProfiles {
+  id              String   @id
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade,onUpdate:Cascade)
+  restaurantName  String
+  description     String?
+  phone           String
+  address         String
+  openingTime     String   // "10:00 AM"
+  closingTime     String   // "11:00 PM"
+  isOpen          Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }

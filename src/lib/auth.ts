@@ -2,15 +2,16 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { PrismaClient } from "../../generated/prisma/client";
 import nodemailer from "nodemailer";
+import { customSession} from "better-auth/plugins"
 
 const prisma = new PrismaClient();
 const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
-    port: 465, // or 587 for TLS
-    secure: true, // true for 465, false for 587
+    port: 465, 
+    secure: true,
     auth: {
       user: "sharintasnia1@gmail.com",
-      pass: process.env.APP_PASS, // must be Gmail App Password
+      pass: process.env.APP_PASS, 
     },
   });
 export const auth = betterAuth({
@@ -104,4 +105,24 @@ export const auth = betterAuth({
             });
         },
       },
+      plugins: [ 
+   
+        customSession(async ({ user, session }) => {
+          const roles = await prisma.user.findMany({
+            where: {
+              id:session.userId
+            },
+            select: {
+              role: true,
+            },
+          });          
+          return {
+              user: {
+                  ...user,
+                  role:roles[0]?.role,
+              },
+              session
+          };
+      }),
+    ]
 });

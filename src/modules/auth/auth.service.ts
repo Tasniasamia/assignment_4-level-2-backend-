@@ -61,10 +61,11 @@
 // }
 
 import type { Response } from "express";
-import { parseSetCookie } from "../../helpers/cookieParser";
 import { auth } from "../../lib/auth";
-import type { loginData, resisterData } from "./auth.interface";
+import type { loginData, resisterData, userType } from "./auth.interface";
 import { fromNodeHeaders } from "better-auth/node";
+import { prisma } from "../../lib/prisma";
+import { ROLE } from "../../../generated/prisma/enums";
 
 const resister = async (payload: resisterData) => {
   const data = await auth.api.signUpEmail({ body: payload });
@@ -126,10 +127,23 @@ console.log("setCookie",setCookie);
   };
 };
 
-const session = async (nodeHeaders: Record<string, string>) => {
-  const data = await auth.api.getSession({
-    headers: fromNodeHeaders(nodeHeaders), 
-  });
+const getProfile = async (userdata:userType) => {
+  const data =await prisma.user.findUnique({
+    where:{id:userdata?.id}
+  })
+
+
+ if((data?.role===ROLE.provider) && (userdata?.role===ROLE.provider)){
+  console.log("coming here");
+   const providerdata=await prisma.providerProfiles.findUnique({
+    where:{userId:data?.id}
+   })
+   return {
+    success:true,
+    data:{...data,providerdata}
+   }
+  }
+
 
   if (data) {
     return { success: true, data };
@@ -142,4 +156,4 @@ const session = async (nodeHeaders: Record<string, string>) => {
   };
 };
 
-export const authService = { resister, login, session };
+export const authService = { resister, login, getProfile };

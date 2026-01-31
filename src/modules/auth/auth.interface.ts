@@ -14,4 +14,12 @@ role:ROLE
 }
 
 
+export interface userType{
+    id:string,
+    name: string,
+    email: string,
+    role:string|undefined,
+    emailVerified:boolean
+  }
+
   

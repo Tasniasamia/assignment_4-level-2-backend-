@@ -63,19 +63,7 @@
 
 import type { NextFunction, Request, Response } from "express";
 import { authService } from "./auth.service";
-import type { loginData, resisterData } from "./auth.interface";
-import { auth } from "../../lib/auth";
-
-const toStringHeaders = (headers: Request["headers"]): Record<string, string> => {
-  const result: Record<string, string> = {};
-  for (const key in headers) {
-    const value = headers[key];
-    if (typeof value === "string") {
-      result[key] = value;
-    }
-  }
-  return result;
-};
+import type { loginData, resisterData, userType } from "./auth.interface";
 
 const resister = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -111,11 +99,11 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-const session = async (req: Request, res: Response, next: NextFunction) => {
+const getProfile = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const headers = toStringHeaders(req.headers);
-   console.log("session headers",headers);
-    const result = await authService.session(headers);
+   
+    const userdata=await req.user;
+    const result = await authService.getProfile(userdata as userType);
 
     if (result.success) {
       return res.status(200).json(result);
@@ -127,4 +115,21 @@ const session = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-export const authController = { resister, login, session };
+const updateProfile = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+   
+    const userdata=await req.user;
+    const result = await authService.getProfile(userdata as userType);
+
+    if (result.success) {
+      return res.status(200).json(result);
+    }
+
+    next(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+export const authController = { resister, login, getProfile,updateProfile };

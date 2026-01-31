@@ -22,7 +22,6 @@ export const authHandler=(...roles:ROLE[])=>{
                message:"Email Verification Required. Please verify your email"
            })
         }
-       console.log("roles.includes(req?.user?.role as ROLE)",!roles.includes(req?.user?.role as ROLE))
         if(!roles?.length && !roles.includes(req?.user?.role as ROLE)){
         res.status(403).json({
            success:false,

@@ -9,7 +9,6 @@ try{
     name:"Admin",
     email:"admin@gmail.com",
     password:"Admin123456",
-    role:ROLE.admin
 };
 const existUser=await prisma.user.findUnique({where:{email:adminInfo.email}});
 if(existUser){
@@ -31,6 +30,8 @@ if(response?.ok){
         },
         data: {
             emailVerified: true,
+            role:ROLE.admin
+
         },
       });
 

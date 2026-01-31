@@ -6,5 +6,6 @@ import { authHandler } from "../../middleware/authHandler";
 
 const route=Router();
 route.get('/admin',authHandler(ROLE.admin),userController.getAllUser);
+route.put('/update-status',authHandler(ROLE.admin),userController.updateStatus);
 
 export const userRoute=route;

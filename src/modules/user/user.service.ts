@@ -1,4 +1,4 @@
-import type { USERSTATUS } from "../../../generated/prisma/enums";
+import { USERSTATUS } from "../../../generated/prisma/enums";
 import type { UserWhereInput } from "../../../generated/prisma/models";
 import { prisma } from "../../lib/prisma";
 
@@ -52,6 +52,39 @@ const getAllUser = async (
     data: data,
   };
 };
+
+const updateStatus=async(data:{id:string})=>{
+  const findUSER=await prisma.user.findUnique({where:{id:data?.id}});
+  let status=findUSER?.status;
+  let userStatus:USERSTATUS;
+  
+  if(status === USERSTATUS.activate ){
+    userStatus=USERSTATUS.suspend;
+  }
+  else{
+    userStatus=USERSTATUS.activate;
+  }
+  const updateData=await prisma.user.update({
+    where:{id:data?.id},
+    data:{status:userStatus}
+  })
+  
+ if(updateData){
+  return {
+    success:true,
+    message:'Status updated successfully',
+    data:updateData
+  }
+ }
+ return {
+  success:false,
+  message:'Status update failed',
+  data:updateData
+ }
+}
+
+
 export const userService = {
-  getAllUser
+  getAllUser,
+  updateStatus
 };

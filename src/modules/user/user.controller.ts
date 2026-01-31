@@ -5,6 +5,8 @@ import { ROLE, type USERSTATUS } from "../../../generated/prisma/enums";
 
 const getAllUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
+    console.log(req.user,'req.user.role')
+
     if (req.user?.role !== ROLE.admin) {
       return res.status(400).json({
         success: false,
@@ -33,7 +35,29 @@ const getAllUser = async (req: Request, res: Response, next: NextFunction) => {
     next(error);
   }
 };
+const updateStatus = async (req: Request, res: Response, next: NextFunction) => {
+  
+  try {
+    console.log(req.user,'req.user.role')
+    if (req.user?.role !== ROLE.admin) {
+      return res.status(400).json({
+        success: false,
+        messsage: "Only admin can update the user status",
+        data: null,
+      });
+    }
+   const data=await req.body;
 
+    const result = await userService.updateStatus(data);
+    if (result.success) {
+      return res.status(200).json(result);
+    }
+    return res.status(400).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
 export const userController = {
   getAllUser,
+  updateStatus
 };

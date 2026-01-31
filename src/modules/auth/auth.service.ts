@@ -62,8 +62,7 @@
 
 import type { Response } from "express";
 import { auth } from "../../lib/auth";
-import type { loginData, resisterData, userType } from "./auth.interface";
-import { fromNodeHeaders } from "better-auth/node";
+import type { loginData, resisterData, updateUserType, userType } from "./auth.interface";
 import { prisma } from "../../lib/prisma";
 import { ROLE } from "../../../generated/prisma/enums";
 
@@ -131,6 +130,14 @@ const getProfile = async (userdata:userType) => {
   const data =await prisma.user.findUnique({
     where:{id:userdata?.id}
   })
+  if(data?.role !== userdata?.role){
+    return {
+      success:false,
+      message:`You are authenticated as ${data?.role} but try to find your profile ${userdata?.role}
+       `,
+       data:data
+    }
+  }
 
 
  if((data?.role===ROLE.provider) && (userdata?.role===ROLE.provider)){
@@ -155,5 +162,40 @@ const getProfile = async (userdata:userType) => {
     data,
   };
 };
+const updateProfile = async (userdata:userType,payload:updateUserType) => {
+  if(payload?.id !== userdata?.id){
+    return {
+      success:false,
+      message:'Payload data and session data are not matched',
+      data:userdata
+    }
+  }
+  const data =await prisma.user.findUnique({
+    where:{id:userdata?.id}
+  })
 
-export const authService = { resister, login, getProfile };
+  if(data?.role !== userdata?.role){
+    return {
+      success:false,
+      message:`You are authenticated as ${data?.role} but try to find your profile ${userdata?.role}
+       `,
+       data:data
+    }
+  }
+
+  const updateData=await prisma.user.update({
+    where:{id:payload?.id},
+    data:{...payload}
+  })
+
+  if (updateData) {
+    return { success: true, data:{...updateData} };
+  }
+
+  return {
+    success: false,
+    message: "User not found",
+    data:updateData || null,
+  };
+};
+export const authService = { resister, login, getProfile ,updateProfile};

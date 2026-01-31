@@ -1,4 +1,4 @@
-import type { ROLE } from "../../../generated/prisma/enums";
+import type { ROLE, USERSTATUS } from "../../../generated/prisma/enums";
 
 export interface resisterData{
 name:string,
@@ -21,5 +21,17 @@ export interface userType{
     role:string|undefined,
     emailVerified:boolean
   }
+
+  
+export interface updateUserType{
+  id:string,
+  name  :string,
+  email :string,
+  emailVerified?: boolean
+  image?:string
+  role  :ROLE,
+  status :USERSTATUS 
+} 
+ 
 
   

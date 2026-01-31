@@ -5,7 +5,6 @@ import { ROLE, type USERSTATUS } from "../../../generated/prisma/enums";
 
 const getAllUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    console.log(req.user,'req.user.role')
 
     if (req.user?.role !== ROLE.admin) {
       return res.status(400).json({
@@ -38,7 +37,6 @@ const getAllUser = async (req: Request, res: Response, next: NextFunction) => {
 const updateStatus = async (req: Request, res: Response, next: NextFunction) => {
   
   try {
-    console.log(req.user,'req.user.role')
     if (req.user?.role !== ROLE.admin) {
       return res.status(400).json({
         success: false,

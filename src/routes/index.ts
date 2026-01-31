@@ -2,6 +2,7 @@ import { Router } from "express";
 import { authRoute } from "../modules/auth/auth.route";
 import { providerRoute } from "../modules/provider/provider.route";
 import { userRoute } from "../modules/user/user.route";
+import { mealsCategoryRoute } from "../modules/meals/category/meals.category.route";
 
 
 const route=Router();
@@ -18,6 +19,10 @@ const allRoutes=[
     {
         path:'/user',
         handler:userRoute
+    },
+    {
+        path:'/meals/category',
+        handler:mealsCategoryRoute
     }
 ]
 allRoutes.forEach((i)=>route.use(i?.path,i?.handler))

@@ -29,7 +29,6 @@ catch(error:any){
 const getProviderProfile=async(req:Request,res:Response,next:NextFunction)=>{
     try{
      const {id}=await req.params;
-     console.log("id",id);
      const result=await providerService.getProviderProfile(id as string);
      if(result?.success){
         return res.status(200).json(result);

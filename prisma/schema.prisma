@@ -48,6 +48,7 @@ model User {
   ProviderProfiles ProviderProfiles?
   reviews       Review[] 
   Meal Meal[]
+   cart   CartItem[]
    @@unique([email])
   @@map("users")
 }
@@ -132,7 +133,7 @@ model Meal {
   category      Categories  @relation(fields: [categoryId], references: [id],onDelete: Cascade,onUpdate: Cascade)
   dietaryPreferences String
   rating        Float    @default(0)
-
+  Cart          CartItem[]
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   reviews       Review[]
@@ -153,4 +154,46 @@ model Review {
 
   @@unique([userId, mealId]) 
   @@map("reviews")
+}
+
+enum ORDERSTATUS {
+  PLACED
+  PREPARING
+  READY
+  DELIVERED
+  CANCELLED
+}
+
+model Order {
+  id            String       @id @default(cuid())
+
+  customerId    String
+
+
+  items         CartItem[]
+
+  status        ORDERSTATUS  @default(PLACED)
+  totalAmount   Int
+  deliveryAddress String
+  paymentMethod String       @default("Cash On Delivery")
+
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  @@map("orders")
+}
+
+
+
+model CartItem {
+  id        String   @id @default(cuid())
+  userId    String
+  user     User  @relation(fields: [userId], references: [id], onDelete: Cascade,onUpdate: Cascade)
+  mealId   String
+  meal     Meal     @relation(fields: [mealId], references: [id], onDelete: Cascade,onUpdate: Cascade)
+  orderId  String
+  orders   Order  @relation(fields: [orderId],references: [id],onDelete: Cascade,onUpdate: Cascade)
+
+  quantity Int
+  @@map("cart_items")
 }

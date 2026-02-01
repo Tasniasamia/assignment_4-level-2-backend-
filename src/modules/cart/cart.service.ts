@@ -60,7 +60,7 @@ const deleteCart=async(cartId:string)=>{
     }
 }
 const getCart=async(userId:string)=>{
-    const getCartData=await prisma.cartItem.findMany({where:{userId:userId}})
+    const getCartData=await prisma.cartItem.findMany({where:{userId:userId,orderId: null}})
     return {
         success:true,
         data:getCartData

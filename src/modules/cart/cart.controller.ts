@@ -6,7 +6,7 @@ import { ROLE } from "../../../generated/prisma/enums";
 const addCart = async (req: Request, res: Response, next: NextFunction) => {
   try {
     if (req?.user?.role !== ROLE.customer) {
-      next({
+    return  next({
         success: false,
         message: "Only customer can add item into cart",
         data: null,
@@ -15,17 +15,17 @@ const addCart = async (req: Request, res: Response, next: NextFunction) => {
     const data = (await req.body) as TCart;
     const result = await cartService.addCart(data);
     if (result?.success) {
-      res.status(200).json(result);
+      return res.status(200).json(result);
     }
-    next(result);
+    return next(result);
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };
 const editCart = async (req: Request, res: Response, next: NextFunction) => {
   try {
     if (req?.user?.role !== ROLE.customer) {
-      next({
+    return  next({
         success: false,
         message: "Only customer can edit item into cart",
         data: null,
@@ -35,18 +35,18 @@ const editCart = async (req: Request, res: Response, next: NextFunction) => {
     const { id } = await req.params;
     const result = await cartService.editCart(id as string, data);
     if (result?.success) {
-      res.status(200).json(result);
+      return res.status(200).json(result);
     }
-    next(result);
+    return next(result);
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };
 
 const deleteCart = async (req: Request, res: Response, next: NextFunction) => {
   try {
     if (req?.user?.role !== ROLE.customer) {
-      next({
+    return  next({
         success: false,
         message: "Only customer can delete cart item",
         data: null,
@@ -55,18 +55,18 @@ const deleteCart = async (req: Request, res: Response, next: NextFunction) => {
     const { id } = await req.params;
     const result = await cartService.deleteCart(id as string);
     if (result?.success) {
-      res.status(200).json(result);
+      return res.status(200).json(result);
     }
-    next(result);
+    return next(result);
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };
 
 const getCart = async (req: Request, res: Response, next: NextFunction) => {
   try {
     if (req?.user?.role !== ROLE.customer) {
-      next({
+     return next({
         success: false,
         message: "You have to be a customer",
         data: null,
@@ -75,11 +75,11 @@ const getCart = async (req: Request, res: Response, next: NextFunction) => {
     const result = await cartService.getCart(req?.user?.id as string);
 
     if (result?.success) {
-      res.status(200).json(result);
+     return res.status(200).json(result);
     }
-    next(result);
+    return next(result);
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };
 

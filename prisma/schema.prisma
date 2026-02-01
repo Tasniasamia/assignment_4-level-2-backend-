@@ -191,8 +191,8 @@ model CartItem {
   user     User  @relation(fields: [userId], references: [id], onDelete: Cascade,onUpdate: Cascade)
   mealId   String
   meal     Meal     @relation(fields: [mealId], references: [id], onDelete: Cascade,onUpdate: Cascade)
-  orderId  String
-  orders   Order  @relation(fields: [orderId],references: [id],onDelete: Cascade,onUpdate: Cascade)
+  orderId  String?
+  orders   Order?  @relation(fields: [orderId],references: [id],onDelete: Cascade,onUpdate: Cascade)
 
   quantity Int
   @@map("cart_items")

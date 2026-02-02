@@ -167,15 +167,15 @@ enum ORDERSTATUS {
 model Order {
   id            String       @id @default(cuid())
 
-  customerId    String
+  customerId    String?
 
 
   items         CartItem[]
 
   status        ORDERSTATUS  @default(PLACED)
-  totalAmount   Int
-  deliveryAddress String
-  paymentMethod String       @default("Cash On Delivery")
+  totalAmount   Int?
+  deliveryAddress String?
+  paymentMethod String?       @default("Cash On Delivery")
 
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt

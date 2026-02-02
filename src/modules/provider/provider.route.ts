@@ -6,6 +6,7 @@ import { providerController } from "./provider.controller";
 const route=Router();
 
 route.put('/profile',authHandler(ROLE.admin,ROLE.provider,ROLE.customer),providerController.updateOrCreateProvider)
-route.get('/:id',providerController.getProviderProfile)
+route.get('/:id',providerController.getProviderProfile);
+
 
 export const providerRoute=route;

@@ -48,7 +48,7 @@ const updateStatus = async (req: Request, res: Response, next: NextFunction) => 
 
     const result = await userService.updateStatus(data);
     if (result.success) {
-      return res.status(200).json(result);
+      return res.status(201).json(result);
     }
     return res.status(400).json(result);
   } catch (error) {

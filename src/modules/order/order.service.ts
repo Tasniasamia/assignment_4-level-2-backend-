@@ -1,4 +1,3 @@
-import { success } from "better-auth";
 import { ORDERSTATUS, ROLE } from "../../../generated/prisma/enums";
 import { prisma } from "../../lib/prisma";
 import type { CreateOrderPayload } from "./order.interface";
@@ -75,19 +74,41 @@ const getOrder=async(user:{  id:string,
         if(user?.role === ROLE.customer){
             findData=await prisma.order.findMany({
                 where:{customerId:user?.id},
-                include:{items:true}
+                include:{items:{include:{meal:{include:{provider:{include:{ProviderProfiles:true}}}}}}}
             })
         }
-        else if(user?.role === ROLE.provider){
-            findData=await prisma.order.findMany({
-                include:{items:{
-                    include:{
-                        meal:{
-                         include:{provider:{include:{ProviderProfiles:{where:{userId:user?.id}}}}}
+        else if (user?.role === ROLE.provider) {
+          findData = await prisma.order.findMany({
+            where: {
+              items: {
+                some: {
+                  meal: {
+                    providerId: user.id
+                  }
+                }
+              }
+            },
+            include: {
+              items: {
+                where: {
+                  meal: {
+                    providerId: user.id
+                  }
+                },
+                include: {
+                  meal: {
+                    include: {
+                      provider: {
+                        include: {
+                          ProviderProfiles: true
                         }
+                      }
                     }
-                }}
-            })
+                  }
+                }
+              }
+            }
+          });
         }
         else if(user?.role === ROLE.admin){
             findData=await prisma.order.findMany({

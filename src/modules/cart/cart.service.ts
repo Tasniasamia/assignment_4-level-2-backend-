@@ -1,4 +1,3 @@
-import { success } from "better-auth";
 import { prisma } from "../../lib/prisma";
 import type { TCart } from "./cart.interface";
 
@@ -25,7 +24,7 @@ const editCart = async (CartId: string, data: TCart) => {
     const newQuantity = existItemIntoCart.quantity + data?.quantity;
     const { quantity, ...rest } = existItemIntoCart;
     const updateCart = await prisma.cartItem.update({
-      where: { id: CartId },
+      where: { id: CartId ,orderId:null},
       data: { quantity: newQuantity, ...rest },
     });
     if (updateCart?.id) {
@@ -60,7 +59,7 @@ const deleteCart=async(cartId:string)=>{
     }
 }
 const getCart=async(userId:string)=>{
-    const getCartData=await prisma.cartItem.findMany({where:{userId:userId,orderId: null}})
+    const getCartData=await prisma.cartItem.findMany({where:{userId:userId,orderId: null},include:{user:true,meal:true}})
     return {
         success:true,
         data:getCartData

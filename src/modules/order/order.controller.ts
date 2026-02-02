@@ -41,7 +41,7 @@ const getOrder = async (req: Request, res: Response, next: NextFunction) => {
       }
     );
     if (result?.success) {
-        return res.status(201).json(result);
+        return res.status(200).json(result);
     }
     return next(result);
   } catch (error) {

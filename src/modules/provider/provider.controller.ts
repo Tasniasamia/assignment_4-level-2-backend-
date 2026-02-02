@@ -9,7 +9,7 @@ try{
   if(userdata?.role !== ROLE.provider){
     return res.status(400).json( {
         success:false,
-        message:`Only ${userdata?.role} is acceptable`,
+        message:`Only provider is acceptable`,
         data:userdata
     })
   }
@@ -17,7 +17,7 @@ try{
   const result=await providerService.updateOrCreateProvider({userId:userdata?.id,...data});
   
   if (result?.success) {
-    return res.status(200).json(result);
+    return res.status(201).json(result);
   }
 
   next(result);

@@ -1,5 +1,4 @@
 import type { NextFunction, Request, Response } from "express";
-import { prisma } from "../../lib/prisma";
 import type { MealType } from "./meals.interface";
 import { mealsService } from "./meals.service";
 import paginationSortingHelper from "../../helpers/paginationHelper";
@@ -17,7 +16,7 @@ const addMeal = async (req: Request, res: Response, next: NextFunction) => {
     const data = await req.body;
     const result = await mealsService.addMeal(data as MealType);
     if (result?.success) {
-      return res.status(200).json(result);
+      return res.status(201).json(result);
     }
     next(result);
   } catch (error) {
@@ -38,7 +37,7 @@ const updateMeal = async (req: Request, res: Response, next: NextFunction) => {
     const result = await mealsService.updateMeal(id as string, data);
 
     if (result?.success) {
-      return res.status(200).json(result);
+      return res.status(201).json(result);
     }
 
     next(result);
@@ -58,7 +57,7 @@ const deleteMeal = async (req: Request, res: Response, next: NextFunction)=> {
     const { id } = await req.params;
     const result=await mealsService.deleteMeal(id as string)
   if (result?.success) {
-   return res.status(200).json(result);
+   return res.status(201).json(result);
   }
  next(result)
 
@@ -96,15 +95,26 @@ next(result);
 
 const getAllMealProvider=async(req: Request, res: Response, next: NextFunction)=>{
     try{
+        if(req?.user?.role !== ROLE.provider){
+          return next({
+            success:false,
+            message:"Only provider is acceptable",
+            data:null
+          })
+        }
+        const userdata=await req?.user as {     id:string,
+          name: string,
+          email: string,
+          role:string|undefined,
+          emailVerified:boolean}
         const { categoryId, dietaryPreferences, price } = req?.query;
-        //type defined
         const category = typeof categoryId === "string" ? categoryId : undefined;
         const dietaryPreference = dietaryPreferences as string|undefined
         const priceNumber=Number(price)
         const {page,limit,skip}= paginationSortingHelper(req.query);
         console.log(req?.query);
        const result = await mealsService.getAllMealProvider(
-         category,dietaryPreference,priceNumber,page,limit,skip
+         category,dietaryPreference,priceNumber,page,limit,skip,userdata
         );
        if(result?.success){
         return res.status(200).json(result);

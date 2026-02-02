@@ -15,7 +15,7 @@ const addCart = async (req: Request, res: Response, next: NextFunction) => {
     const data = (await req.body) as TCart;
     const result = await cartService.addCart(data);
     if (result?.success) {
-      return res.status(200).json(result);
+      return res.status(201).json(result);
     }
     return next(result);
   } catch (error) {
@@ -35,7 +35,7 @@ const editCart = async (req: Request, res: Response, next: NextFunction) => {
     const { id } = await req.params;
     const result = await cartService.editCart(id as string, data);
     if (result?.success) {
-      return res.status(200).json(result);
+      return res.status(201).json(result);
     }
     return next(result);
   } catch (error) {
@@ -55,7 +55,7 @@ const deleteCart = async (req: Request, res: Response, next: NextFunction) => {
     const { id } = await req.params;
     const result = await cartService.deleteCart(id as string);
     if (result?.success) {
-      return res.status(200).json(result);
+      return res.status(201).json(result);
     }
     return next(result);
   } catch (error) {

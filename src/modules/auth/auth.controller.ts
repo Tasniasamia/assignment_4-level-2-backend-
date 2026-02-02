@@ -26,7 +26,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
 
     if (result.success) {
     
-      return res.status(200).json(result);
+      return res.status(201).json(result);
     }
 
     next(result);
@@ -59,7 +59,7 @@ const updateProfile = async (req: Request, res: Response, next: NextFunction) =>
     const result = await authService.updateProfile(userdata as userType,payload);
 
     if (result.success) {
-      return res.status(200).json(result);
+      return res.status(201).json(result);
     }
 
     next(result);

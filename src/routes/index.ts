@@ -6,6 +6,7 @@ import { mealsCategoryRoute } from "../modules/meals/category/meals.category.rou
 import { mealRoute } from "../modules/meals/meals.route";
 import { cartRoute } from "../modules/cart/cart.route";
 import { orderRoute } from "../modules/order/order.route";
+import { reviewRoute } from "../modules/review/review.route";
 
 
 const route=Router();
@@ -38,6 +39,10 @@ const allRoutes=[
     {
         path:'/order',
         handler:orderRoute
+    },
+    {
+        path:'/review',
+        handler:reviewRoute
     }
 ]
 allRoutes.forEach((i)=>route.use(i?.path,i?.handler))

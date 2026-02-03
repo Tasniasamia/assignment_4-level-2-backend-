@@ -57,8 +57,9 @@ const updateProfile = async (req: Request, res: Response, next: NextFunction) =>
     const userdata=await req.user;
     const payload=await req.body;
     const result = await authService.updateProfile(userdata as userType,payload);
-
+    console.log("result of update profile",result)
     if (result.success) {
+      console.log("coming here");
       return res.status(201).json(result);
     }
 

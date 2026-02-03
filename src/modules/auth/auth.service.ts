@@ -6,6 +6,7 @@ import { prisma } from "../../lib/prisma";
 import { ROLE } from "../../../generated/prisma/enums";
 
 const resister = async (payload: resisterData) => {
+  try{
   const data = await auth.api.signUpEmail({ body: payload });
 
   if (data?.user?.id) {
@@ -29,13 +30,21 @@ const resister = async (payload: resisterData) => {
     message: "User Registration Failed",
     data,
   };
+}
+  catch(error:any){
+    return {
+     success:false,
+     data:JSON.stringify(error),
+     message:error?.message
+    }
+   }
 };
 
 const login = async (
   payload: loginData,
   res:Response
 ) => {
-
+try{
 const responsedata=await fetch(`${process.env.API_URL}/api/auth/sign-in/email`,{
   method: "POST",
   headers: {
@@ -48,29 +57,40 @@ const responsedata=await fetch(`${process.env.API_URL}/api/auth/sign-in/email`,{
 const data=await responsedata.json();
 const setCookie = responsedata.headers.get("set-cookie");
   
-  if (setCookie) {
-    res.setHeader("Set-Cookie", setCookie);
-   
-  }
+ 
   
+console.log("data ",data);
 
-
-  if (data) {
+  if (!data?.code) {
+    if (setCookie) {
+      res.setHeader("Set-Cookie", setCookie);
+     
+    }
+    const userdata=await prisma.user.findUnique({where:{id:data?.user?.id}});
     return {
       success: true,
-      data:{...data},
+      data:{...userdata},
       message: "Login Successfully",
     };
   }
 
   return {
     success: false,
-    message: "Login Failed",
+    message: data?.code? data?.message :"Login Failed",
     data,
   };
+}
+catch(error:any){
+ return {
+  success:false,
+  data:JSON.stringify(error),
+  message:error?.message
+ }
+}
 };
 
 const getProfile = async (userdata:userType) => {
+
   const data =await prisma.user.findUnique({
     where:{id:userdata?.id}
   })
@@ -106,6 +126,7 @@ const getProfile = async (userdata:userType) => {
   };
 };
 const updateProfile = async (userdata:userType,payload:updateUserType) => {
+  console.log("coming to updateProfile service");
   if(payload?.id !== userdata?.id){
     return {
       success:false,
@@ -132,7 +153,7 @@ const updateProfile = async (userdata:userType,payload:updateUserType) => {
   })
 
   if (updateData) {
-    return { success: true, data:{...updateData} };
+    return { success: true,message:"profile updated successfully" ,data:{...updateData} };
   }
 
   return {

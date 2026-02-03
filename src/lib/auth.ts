@@ -18,9 +18,14 @@ export const auth = betterAuth({
     database: prismaAdapter(prisma, {
         provider: "postgresql", 
     }),
-    advanced: {
-        cookiePrefix: "better-auth"
-    },
+    trustedOrigins:['http://localhost:3000'],
+
+  //   session: {
+  //     cookieCache: {
+  //         enabled: true,
+  //         maxAge: 5 * 60 // Cache duration in seconds (5 minutes)
+  //     }
+  // },
     emailAndPassword: { 
         enabled: true, 
         requireEmailVerification: true,
@@ -29,7 +34,7 @@ export const auth = betterAuth({
       emailVerification: {
         sendOnSignUp: true,
         autoSignInAfterVerification: true,
-
+        
 
         sendVerificationEmail: async ( { user, url, token }, request) => {
             const verificationUrl = `${process.env.BETTER_AUTH_URL}/verification?token=${token}`;
@@ -103,6 +108,10 @@ export const auth = betterAuth({
               subject: "Verify your email address",
               html: htmlTemplate,
             });
+        },
+        cookies: {
+          secure: false,
+          sameSite: "lax",
         },
       },
       plugins: [ 

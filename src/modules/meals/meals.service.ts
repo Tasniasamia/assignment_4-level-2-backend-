@@ -132,7 +132,7 @@ const getAllMealProvider = async (
 ) => {
   const anyConditions: MealWhereInput[] = [];
   anyConditions.push({providerId:user?.id});
-  if (category || dietaryPreference) {
+  if (category!='all' || dietaryPreference) {
     anyConditions.push({
       OR: [
         {

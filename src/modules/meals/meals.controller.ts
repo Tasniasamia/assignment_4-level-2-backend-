@@ -102,13 +102,14 @@ const getAllMealProvider=async(req: Request, res: Response, next: NextFunction)=
             data:null
           })
         }
-        const userdata=await req?.user as {     id:string,
+        const userdata=await req?.user as {   
+            id:string,
           name: string,
           email: string,
           role:string|undefined,
           emailVerified:boolean}
         const { categoryId, dietaryPreferences, price } = req?.query;
-        const category = typeof categoryId === "string" ? categoryId : undefined;
+        const category = typeof categoryId === "string" ? categoryId : "all";
         const dietaryPreference = dietaryPreferences as string|undefined
         const priceNumber=Number(price)
         const {page,limit,skip}= paginationSortingHelper(req.query);

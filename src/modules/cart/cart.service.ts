@@ -20,12 +20,27 @@ const editCart = async (CartId: string, data: TCart) => {
   const existItemIntoCart = await prisma.cartItem.findUnique({
     where: { id: CartId },
   });
+  // if (existItemIntoCart?.id) {
+  //   const newQuantity = existItemIntoCart.quantity + data?.quantity;
+  //   const { quantity, ...rest } = existItemIntoCart;
+  //   const updateCart = await prisma.cartItem.update({
+  //     where: { id: CartId ,orderId:null},
+  //     data: { quantity: newQuantity, ...rest },
+  //   });
+  //   if (updateCart?.id) {
+  //     return {
+  //       success: true,
+  //       message: "Cart Data Updated Successfully",
+  //       data: updateCart,
+  //     };
+  //   }
+  // }
   if (existItemIntoCart?.id) {
     const newQuantity = existItemIntoCart.quantity + data?.quantity;
     const { quantity, ...rest } = existItemIntoCart;
     const updateCart = await prisma.cartItem.update({
       where: { id: CartId ,orderId:null},
-      data: { quantity: newQuantity, ...rest },
+      data: { quantity: data?.quantity, ...rest },
     });
     if (updateCart?.id) {
       return {

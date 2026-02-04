@@ -194,7 +194,7 @@ const getMealById = async (id: string) => {
         },
       },
       category: true,
-      reviews: true,
+      reviews: {include:{user:true}},
     },
   });
   if (data?.id) {

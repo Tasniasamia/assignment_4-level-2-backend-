@@ -107,6 +107,7 @@ const getOrder = async (
         },
       },
       include: {
+        
         items: {
           where: {
             meal: {
@@ -269,7 +270,8 @@ const getSingleOrder = async (id: string) => {
     },
   });
   if (findOrder) {
-    return { success: true, data: findOrder };
+    const userdata=await prisma.user.findUnique({where:{id:findOrder?.customerId as string}});
+    return { success: true, data: {...findOrder,userdata} };
   }
   return {
     success: false,

@@ -4,7 +4,6 @@ import type { MealType } from "./meals.interface";
 
 const addMeal = async (data: MealType) => {
   const insertdata = await prisma.meal.create({ data });
-  console.log("insertData ", insertdata);
   if (insertdata?.id) {
     return {
       success: true,

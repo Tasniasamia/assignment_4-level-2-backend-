@@ -4,11 +4,8 @@ import { auth } from "../lib/auth";
 
 export const authHandler=(...roles:ROLE[])=>{
     return async(req:Request,res:Response,next:NextFunction)=>{
-        console.log("req.headers",req?.headers as any);
         const session=await auth.api.getSession({headers:req?.headers as any});
-         console.log("session",session);
         if(!session?.session){
-            console.log("coming here")
            return res.status(401).json(
                {
                    success:false,

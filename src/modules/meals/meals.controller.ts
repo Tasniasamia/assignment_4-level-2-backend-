@@ -78,7 +78,6 @@ const getAllMeal = async (req: Request, res: Response, next: NextFunction) => {
 
   
     const {page,limit,skip}= paginationSortingHelper(req.query);
-    console.log(req?.query);
    const result = await mealsService.getAllMeal(
      category,dietaryPreference,priceNumber,page,limit,skip
     );
@@ -113,7 +112,6 @@ const getAllMealProvider=async(req: Request, res: Response, next: NextFunction)=
         const dietaryPreference = dietaryPreferences as string|undefined
         const priceNumber=Number(price)
         const {page,limit,skip}= paginationSortingHelper(req.query);
-        console.log(req?.query);
        const result = await mealsService.getAllMealProvider(
          category,dietaryPreference,priceNumber,page,limit,skip,userdata
         );

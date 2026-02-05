@@ -1,4 +1,5 @@
 export interface reviewType {
+  orderId:string,
   userId: string;
   mealId: string;
   rating: number;

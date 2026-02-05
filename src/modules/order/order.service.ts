@@ -187,14 +187,11 @@ const updateOrder = async (
     status: ORDERSTATUS;
   }
 ) => {
-  console.log("coming update order service");
   let findOrder;
   if (authenticator?.role === ROLE.customer) {
-    console.log("authenticator", authenticator);
     findOrder = await prisma.order.findFirst({
       where: { id: id, customerId: authenticator?.id },
     });
-    console.log("findOrder", findOrder);
     if (!findOrder || data?.status != ORDERSTATUS.CANCELLED) {
       return {
         success: false,
@@ -232,8 +229,7 @@ const updateOrder = async (
     }
   }
 
-  console.log("before status update");
-  console.log("orderId",id);
+
   const status: ORDERSTATUS = ORDERSTATUS[data.status as keyof typeof ORDERSTATUS];
 
   const updateData = await prisma.order.update({

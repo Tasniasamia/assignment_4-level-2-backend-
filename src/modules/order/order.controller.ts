@@ -60,7 +60,6 @@ const updateOrder=async(req: Request, res: Response, next: NextFunction) =>{
 try{
 const {id}=await req?.params;
 const data=await req?.body;
-console.log("data",data)
 const result=await orderService.updateOrder(id as string,req?.user as {
   id: string;
   name: string;

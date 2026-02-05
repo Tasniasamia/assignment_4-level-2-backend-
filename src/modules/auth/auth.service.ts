@@ -59,7 +59,6 @@ const setCookie = responsedata.headers.get("set-cookie");
   
  
   
-console.log("data ",data);
 
   if (!data?.code) {
     if (setCookie) {
@@ -126,7 +125,6 @@ const getProfile = async (userdata:userType) => {
   };
 };
 const updateProfile = async (userdata:userType,payload:updateUserType) => {
-  console.log("coming to updateProfile service");
   if(payload?.id !== userdata?.id){
     return {
       success:false,

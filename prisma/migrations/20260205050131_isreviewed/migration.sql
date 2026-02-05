@@ -1,0 +1,6 @@
+-- AlterTable
+ALTER TABLE "orders" ADD COLUMN     "isReviewed" BOOLEAN NOT NULL DEFAULT false;
+
+-- AlterTable
+ALTER TABLE "reviews" ALTER COLUMN "rating" SET DEFAULT 0,
+ALTER COLUMN "rating" SET DATA TYPE DOUBLE PRECISION;

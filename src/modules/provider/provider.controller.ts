@@ -39,7 +39,21 @@ const getProviderProfile=async(req:Request,res:Response,next:NextFunction)=>{
      next(error);
     }
 }
+const providerDashboard=async(req:Request,res:Response,next:NextFunction)=>{
+  try{
+      const userData=await req?.user;
+      const result=await providerService.providerDashboard(userData?.id as string);
+      if(result?.success){
+        return res.status(200).json(result);
+      }
+      return next(result);
+  }
+  catch(error){
+    return next(error)
+  }
+}
 export const providerController={
     updateOrCreateProvider,
-    getProviderProfile
+    getProviderProfile,
+    providerDashboard
 }

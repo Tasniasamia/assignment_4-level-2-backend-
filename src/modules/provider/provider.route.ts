@@ -4,8 +4,9 @@ import { ROLE } from "../../../generated/prisma/enums";
 import { providerController } from "./provider.controller";
 
 const route=Router();
+route.get('/dashboard',authHandler(ROLE.provider),providerController.providerDashboard);
 
-route.put('/profile',authHandler(ROLE.admin,ROLE.provider,ROLE.customer),providerController.updateOrCreateProvider)
+route.put('/profile',authHandler(ROLE.provider),providerController.updateOrCreateProvider)
 route.get('/:id',providerController.getProviderProfile);
 
 

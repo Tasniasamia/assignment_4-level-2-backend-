@@ -45,7 +45,7 @@ const login = async (
   res:Response
 ) => {
 try{
-const responsedata=await fetch(`${process.env.API_URL}/api/auth/sign-in/email`,{
+const responsedata=await fetch(`${process.env.BETTER_AUTH_URL}/api/auth/sign-in/email`,{
   method: "POST",
   headers: {
     "Content-Type": "application/json",

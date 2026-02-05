@@ -14,7 +14,7 @@ const existUser=await prisma.user.findUnique({where:{email:adminInfo.email}});
 if(existUser){
  throw new Error("User already exist");
 }
-const response=await fetch(`${process.env.API_URL}/api/auth/sign-up/email`,{
+const response=await fetch(`${process.env.BETTER_AUTH_URL}/api/auth/sign-up/email`,{
     method: "POST",
     headers: {
       "Content-Type": "application/json",

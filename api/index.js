@@ -515,7 +515,7 @@ var resister = async (payload) => {
 };
 var login = async (payload, res) => {
   try {
-    const responsedata = await fetch(`${process.env.API_URL}/api/auth/sign-in/email`, {
+    const responsedata = await fetch(`${process.env.BETTER_AUTH_URL}/api/auth/sign-in/email`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

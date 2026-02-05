@@ -54,7 +54,7 @@ const responsedata=await fetch(`${process.env.API_URL}/api/auth/sign-in/email`,{
   credentials: "include", 
   body: JSON.stringify(payload),
 })
-const data=await responsedata.json();
+const data:any=await responsedata.json();
 const setCookie = responsedata.headers.get("set-cookie");
   
  

@@ -378,7 +378,7 @@ var auth = betterAuth({
     sendOnSignUp: true,
     autoSignInAfterVerification: true,
     sendVerificationEmail: async ({ user, url, token }, request) => {
-      const verificationUrl = `${process.env.BETTER_AUTH_URL}/verification?token=${token}`;
+      const verificationUrl = `${process.env.API_URL}/verification?token=${token}`;
       const htmlTemplate = `
               <!DOCTYPE html>
               <html>

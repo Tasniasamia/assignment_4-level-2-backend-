@@ -482,10 +482,7 @@ var auth = betterAuth({
 
 // src/lib/prisma.ts
 import "dotenv/config";
-import { PrismaPg } from "@prisma/adapter-pg";
-var connectionString = `${process.env.DATABASE_URL}`;
-var adapter = new PrismaPg({ connectionString });
-var prisma2 = new PrismaClient({ adapter });
+var prisma2 = new PrismaClient();
 
 // src/modules/auth/auth.service.ts
 var resister = async (payload) => {

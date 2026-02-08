@@ -53,7 +53,7 @@ var config = {
       "value": "prisma-client"
     },
     "output": {
-      "value": "/home/skecth/WebstormProjects/assignment_4-level-2-backend-/generated/prisma",
+      "value": "C:\\Users\\Tasnia\\Desktop\\Programming-hero\\Assignment-4\\backend\\generated\\prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -62,7 +62,7 @@ var config = {
     "binaryTargets": [
       {
         "fromEnvVar": null,
-        "value": "debian-openssl-3.0.x",
+        "value": "windows",
         "native": true
       },
       {
@@ -71,7 +71,7 @@ var config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/home/skecth/WebstormProjects/assignment_4-level-2-backend-/prisma/schema.prisma",
+    "sourceFilePath": "C:\\Users\\Tasnia\\Desktop\\Programming-hero\\Assignment-4\\backend\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
   "relativePath": "../../prisma",
@@ -307,8 +307,8 @@ var defineExtension = runtime2.Extensions.defineExtension;
 // generated/prisma/client.ts
 globalThis["__dirname"] = path.dirname(fileURLToPath(import.meta.url));
 var PrismaClient = getPrismaClientClass(__dirname);
-path.join(__dirname, "libquery_engine-debian-openssl-3.0.x.so.node");
-path.join(process2.cwd(), "generated/prisma/libquery_engine-debian-openssl-3.0.x.so.node");
+path.join(__dirname, "query_engine-windows.dll.node");
+path.join(process2.cwd(), "generated/prisma/query_engine-windows.dll.node");
 path.join(__dirname, "libquery_engine-rhel-openssl-3.0.x.so.node");
 path.join(process2.cwd(), "generated/prisma/libquery_engine-rhel-openssl-3.0.x.so.node");
 

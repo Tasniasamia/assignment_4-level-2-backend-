@@ -5,52 +5,52 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
-  binaryTargets = ["native","rhel-openssl-3.0.x"]
+  provider      = "prisma-client"
+  output        = "../generated/prisma"
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
-
-
 
 enum ROLE {
   customer
   provider
   admin
 }
-enum USERSTATUS{
+
+enum USERSTATUS {
   suspend
   activate
 }
-
 
 model Categories {
   id    String @id @default(cuid())
   name  String // "Italian", "Chinese"
   meals Meal[]
+
   @@map("category")
 }
+
 model User {
-  id            String    @id
-  name          String
-  email         String
-  emailVerified Boolean   @default(false)
-  image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  sessions      Session[]
-  accounts      Account[]
-  role          ROLE      @default(customer)
-  status        USERSTATUS @default(activate)
+  id               String            @id
+  name             String
+  email            String
+  emailVerified    Boolean           @default(false)
+  image            String?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  sessions         Session[]
+  accounts         Account[]
+  role             ROLE              @default(customer)
+  status           USERSTATUS        @default(activate)
   ProviderProfiles ProviderProfiles?
-  reviews       Review[] 
-  Meal Meal[]
-   cart   CartItem[]
-   @@unique([email])
+  reviews          Review[]
+  Meal             Meal[]
+  cart             CartItem[]
+
+  @@unique([email])
   @@map("users")
 }
 
@@ -64,6 +64,7 @@ model Session {
   userAgent String?
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@unique([token])
   @@index([userId])
   @@map("session")
@@ -101,43 +102,39 @@ model Verification {
   @@map("verification")
 }
 
-
 model ProviderProfiles {
-  id              String   @id  @default(cuid())
-  userId          String   @unique
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade,onUpdate:Cascade)
-  restaurantName  String
-  description     String?
-  phone           String
-  address         String
-  openingTime     String   // "10:00 AM"
-  closingTime     String   // "11:00 PM"
-  isOpen          Boolean  @default(true)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id             String   @id @default(cuid())
+  userId         String   @unique
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  restaurantName String
+  description    String?
+  phone          String
+  address        String
+  openingTime    String // "10:00 AM"
+  closingTime    String // "11:00 PM"
+  isOpen         Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
 
-
-
-
-
 model Meal {
-  id              String   @id  @default(cuid())
-  name          String
-  description   String?
-  price         Int
-  image         String?
-  isAvailable   Boolean  @default(true)
-  providerId    String
-  provider      User  @relation(fields: [providerId], references: [id], onDelete: Cascade,onUpdate: Cascade)
-  categoryId    String
-  category      Categories  @relation(fields: [categoryId], references: [id],onDelete: Cascade,onUpdate: Cascade)
+  id                 String     @id @default(cuid())
+  name               String
+  description        String?
+  price              Int
+  image              String?
+  isAvailable        Boolean    @default(true)
+  providerId         String
+  provider           User       @relation(fields: [providerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  categoryId         String
+  category           Categories @relation(fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   dietaryPreferences String
-  rating        Float    @default(0)
-  Cart          CartItem[]
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  reviews       Review[]
+  rating             Float      @default(0)
+  Cart               CartItem[]
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+  reviews            Review[]
+
   @@unique([id])
   @@map("meals")
 }
@@ -148,12 +145,11 @@ model Review {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   mealId    String
   meal      Meal     @relation(fields: [mealId], references: [id], onDelete: Cascade)
-  rating        Float    @default(0)
+  rating    Float    @default(0)
   comment   String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  
   @@map("reviews")
 }
 
@@ -166,35 +162,33 @@ enum ORDERSTATUS {
 }
 
 model Order {
-  id            String       @id @default(cuid())
+  id String @id @default(cuid())
 
-  customerId    String?
+  customerId String?
 
+  items CartItem[]
 
-  items         CartItem[]
-
-  status        ORDERSTATUS  @default(PLACED)
-  totalAmount   Int?
+  status          ORDERSTATUS @default(PLACED)
+  totalAmount     Int?
   deliveryAddress String?
-  paymentMethod String?       @default("Cash On Delivery")
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
+  paymentMethod   String?     @default("Cash On Delivery")
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
 
   @@map("orders")
 }
 
-
-
 model CartItem {
-  id        String   @id @default(cuid())
-  userId    String
-  user     User  @relation(fields: [userId], references: [id], onDelete: Cascade,onUpdate: Cascade)
-  mealId   String
-  meal     Meal     @relation(fields: [mealId], references: [id], onDelete: Cascade,onUpdate: Cascade)
-  orderId  String?
-  orders   Order?  @relation(fields: [orderId],references: [id],onDelete: Cascade,onUpdate: Cascade)
-  isReviewed    Boolean      @default(false)
+  id         String  @id @default(cuid())
+  userId     String
+  user       User    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  mealId     String
+  meal       Meal    @relation(fields: [mealId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  orderId    String?
+  orders     Order?  @relation(fields: [orderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  isReviewed Boolean @default(false)
 
   quantity Int
+
   @@map("cart_items")
 }

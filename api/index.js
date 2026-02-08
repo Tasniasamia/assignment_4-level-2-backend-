@@ -20,10 +20,10 @@ var notFound = (req, res) => {
 var notFound_default = notFound;
 
 // generated/prisma/client.ts
-import * as process2 from "process";
+import "process";
 import * as path from "path";
 import { fileURLToPath } from "url";
-import "@prisma/client/runtime/library";
+import "@prisma/client/runtime/client";
 
 // generated/prisma/enums.ts
 var ROLE = {
@@ -44,67 +44,34 @@ var ORDERSTATUS = {
 };
 
 // generated/prisma/internal/class.ts
-import * as runtime from "@prisma/client/runtime/library";
+import * as runtime from "@prisma/client/runtime/client";
 var config = {
-  "generator": {
-    "name": "client",
-    "provider": {
-      "fromEnvVar": null,
-      "value": "prisma-client"
-    },
-    "output": {
-      "value": "/home/skecth/WebstormProjects/assignment_4-level-2-backend-/generated/prisma",
-      "fromEnvVar": null
-    },
-    "config": {
-      "engineType": "library"
-    },
-    "binaryTargets": [
-      {
-        "fromEnvVar": null,
-        "value": "debian-openssl-3.0.x",
-        "native": true
-      },
-      {
-        "fromEnvVar": null,
-        "value": "rhel-openssl-3.0.x"
-      }
-    ],
-    "previewFeatures": [],
-    "sourceFilePath": "/home/skecth/WebstormProjects/assignment_4-level-2-backend-/prisma/schema.prisma",
-    "isCustomOutput": true
-  },
-  "relativePath": "../../prisma",
-  "clientVersion": "6.19.2",
-  "engineVersion": "c2990dca591cba766e3b7ef5d9e8a84796e47ab7",
-  "datasourceNames": [
-    "db"
-  ],
+  "previewFeatures": [],
+  "clientVersion": "7.3.0",
+  "engineVersion": "9d6ad21cbbceab97458517b147a6a09ff43aa735",
   "activeProvider": "postgresql",
-  "postinstall": false,
-  "inlineDatasources": {
-    "db": {
-      "url": {
-        "fromEnvVar": "DATABASE_URL",
-        "value": null
-      }
-    }
-  },
-  "inlineSchema": '// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider      = "prisma-client"\n  output        = "../generated/prisma"\n  binaryTargets = ["native", "rhel-openssl-3.0.x"]\n}\n\ndatasource db {\n  provider = "postgresql"\n  url      = env("DATABASE_URL")\n}\n\nenum ROLE {\n  customer\n  provider\n  admin\n}\n\nenum USERSTATUS {\n  suspend\n  activate\n}\n\nmodel Categories {\n  id    String @id @default(cuid())\n  name  String // "Italian", "Chinese"\n  meals Meal[]\n\n  @@map("category")\n}\n\nmodel User {\n  id               String            @id\n  name             String\n  email            String\n  emailVerified    Boolean           @default(false)\n  image            String?\n  createdAt        DateTime          @default(now())\n  updatedAt        DateTime          @updatedAt\n  sessions         Session[]\n  accounts         Account[]\n  role             ROLE              @default(customer)\n  status           USERSTATUS        @default(activate)\n  ProviderProfiles ProviderProfiles?\n  reviews          Review[]\n  Meal             Meal[]\n  cart             CartItem[]\n\n  @@unique([email])\n  @@map("users")\n}\n\nmodel Session {\n  id        String   @id\n  expiresAt DateTime\n  token     String\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n  ipAddress String?\n  userAgent String?\n  userId    String\n  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@unique([token])\n  @@index([userId])\n  @@map("session")\n}\n\nmodel Account {\n  id                    String    @id\n  accountId             String\n  providerId            String\n  userId                String\n  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)\n  accessToken           String?\n  refreshToken          String?\n  idToken               String?\n  accessTokenExpiresAt  DateTime?\n  refreshTokenExpiresAt DateTime?\n  scope                 String?\n  password              String?\n  createdAt             DateTime  @default(now())\n  updatedAt             DateTime  @updatedAt\n\n  @@index([userId])\n  @@map("account")\n}\n\nmodel Verification {\n  id         String   @id\n  identifier String\n  value      String\n  expiresAt  DateTime\n  createdAt  DateTime @default(now())\n  updatedAt  DateTime @updatedAt\n\n  @@index([identifier])\n  @@map("verification")\n}\n\nmodel ProviderProfiles {\n  id             String   @id @default(cuid())\n  userId         String   @unique\n  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)\n  restaurantName String\n  description    String?\n  phone          String\n  address        String\n  openingTime    String // "10:00 AM"\n  closingTime    String // "11:00 PM"\n  isOpen         Boolean  @default(true)\n  createdAt      DateTime @default(now())\n  updatedAt      DateTime @updatedAt\n}\n\nmodel Meal {\n  id                 String     @id @default(cuid())\n  name               String\n  description        String?\n  price              Int\n  image              String?\n  isAvailable        Boolean    @default(true)\n  providerId         String\n  provider           User       @relation(fields: [providerId], references: [id], onDelete: Cascade, onUpdate: Cascade)\n  categoryId         String\n  category           Categories @relation(fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: Cascade)\n  dietaryPreferences String\n  rating             Float      @default(0)\n  Cart               CartItem[]\n  createdAt          DateTime   @default(now())\n  updatedAt          DateTime   @updatedAt\n  reviews            Review[]\n\n  @@unique([id])\n  @@map("meals")\n}\n\nmodel Review {\n  id        String   @id @default(cuid())\n  userId    String\n  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n  mealId    String\n  meal      Meal     @relation(fields: [mealId], references: [id], onDelete: Cascade)\n  rating    Float    @default(0)\n  comment   String?\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  @@map("reviews")\n}\n\nenum ORDERSTATUS {\n  PLACED\n  PREPARING\n  READY\n  DELIVERED\n  CANCELLED\n}\n\nmodel Order {\n  id String @id @default(cuid())\n\n  customerId String?\n\n  items CartItem[]\n\n  status          ORDERSTATUS @default(PLACED)\n  totalAmount     Int?\n  deliveryAddress String?\n  paymentMethod   String?     @default("Cash On Delivery")\n  createdAt       DateTime    @default(now())\n  updatedAt       DateTime    @updatedAt\n\n  @@map("orders")\n}\n\nmodel CartItem {\n  id         String  @id @default(cuid())\n  userId     String\n  user       User    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)\n  mealId     String\n  meal       Meal    @relation(fields: [mealId], references: [id], onDelete: Cascade, onUpdate: Cascade)\n  orderId    String?\n  orders     Order?  @relation(fields: [orderId], references: [id], onDelete: Cascade, onUpdate: Cascade)\n  isReviewed Boolean @default(false)\n\n  quantity Int\n\n  @@map("cart_items")\n}\n',
-  "inlineSchemaHash": "c3bf5fc680c001ba114687f336e453726487b70f4ca6d6664af44a599af611d2",
-  "copyEngine": true,
+  "inlineSchema": '// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider      = "prisma-client"\n  output        = "../generated/prisma"\n  binaryTargets = ["native", "rhel-openssl-3.0.x"]\n}\n\ndatasource db {\n  provider = "postgresql"\n}\n\nenum ROLE {\n  customer\n  provider\n  admin\n}\n\nenum USERSTATUS {\n  suspend\n  activate\n}\n\nmodel Categories {\n  id    String @id @default(cuid())\n  name  String // "Italian", "Chinese"\n  meals Meal[]\n\n  @@map("category")\n}\n\nmodel User {\n  id               String            @id\n  name             String\n  email            String\n  emailVerified    Boolean           @default(false)\n  image            String?\n  createdAt        DateTime          @default(now())\n  updatedAt        DateTime          @updatedAt\n  sessions         Session[]\n  accounts         Account[]\n  role             ROLE              @default(customer)\n  status           USERSTATUS        @default(activate)\n  ProviderProfiles ProviderProfiles?\n  reviews          Review[]\n  Meal             Meal[]\n  cart             CartItem[]\n\n  @@unique([email])\n  @@map("users")\n}\n\nmodel Session {\n  id        String   @id\n  expiresAt DateTime\n  token     String\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n  ipAddress String?\n  userAgent String?\n  userId    String\n  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@unique([token])\n  @@index([userId])\n  @@map("session")\n}\n\nmodel Account {\n  id                    String    @id\n  accountId             String\n  providerId            String\n  userId                String\n  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)\n  accessToken           String?\n  refreshToken          String?\n  idToken               String?\n  accessTokenExpiresAt  DateTime?\n  refreshTokenExpiresAt DateTime?\n  scope                 String?\n  password              String?\n  createdAt             DateTime  @default(now())\n  updatedAt             DateTime  @updatedAt\n\n  @@index([userId])\n  @@map("account")\n}\n\nmodel Verification {\n  id         String   @id\n  identifier String\n  value      String\n  expiresAt  DateTime\n  createdAt  DateTime @default(now())\n  updatedAt  DateTime @updatedAt\n\n  @@index([identifier])\n  @@map("verification")\n}\n\nmodel ProviderProfiles {\n  id             String   @id @default(cuid())\n  userId         String   @unique\n  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)\n  restaurantName String\n  description    String?\n  phone          String\n  address        String\n  openingTime    String // "10:00 AM"\n  closingTime    String // "11:00 PM"\n  isOpen         Boolean  @default(true)\n  createdAt      DateTime @default(now())\n  updatedAt      DateTime @updatedAt\n}\n\nmodel Meal {\n  id                 String     @id @default(cuid())\n  name               String\n  description        String?\n  price              Int\n  image              String?\n  isAvailable        Boolean    @default(true)\n  providerId         String\n  provider           User       @relation(fields: [providerId], references: [id], onDelete: Cascade, onUpdate: Cascade)\n  categoryId         String\n  category           Categories @relation(fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: Cascade)\n  dietaryPreferences String\n  rating             Float      @default(0)\n  Cart               CartItem[]\n  createdAt          DateTime   @default(now())\n  updatedAt          DateTime   @updatedAt\n  reviews            Review[]\n\n  @@unique([id])\n  @@map("meals")\n}\n\nmodel Review {\n  id        String   @id @default(cuid())\n  userId    String\n  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n  mealId    String\n  meal      Meal     @relation(fields: [mealId], references: [id], onDelete: Cascade)\n  rating    Float    @default(0)\n  comment   String?\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  @@map("reviews")\n}\n\nenum ORDERSTATUS {\n  PLACED\n  PREPARING\n  READY\n  DELIVERED\n  CANCELLED\n}\n\nmodel Order {\n  id String @id @default(cuid())\n\n  customerId String?\n\n  items CartItem[]\n\n  status          ORDERSTATUS @default(PLACED)\n  totalAmount     Int?\n  deliveryAddress String?\n  paymentMethod   String?     @default("Cash On Delivery")\n  createdAt       DateTime    @default(now())\n  updatedAt       DateTime    @updatedAt\n\n  @@map("orders")\n}\n\nmodel CartItem {\n  id         String  @id @default(cuid())\n  userId     String\n  user       User    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)\n  mealId     String\n  meal       Meal    @relation(fields: [mealId], references: [id], onDelete: Cascade, onUpdate: Cascade)\n  orderId    String?\n  orders     Order?  @relation(fields: [orderId], references: [id], onDelete: Cascade, onUpdate: Cascade)\n  isReviewed Boolean @default(false)\n\n  quantity Int\n\n  @@map("cart_items")\n}\n',
   "runtimeDataModel": {
     "models": {},
     "enums": {},
     "types": {}
-  },
-  "dirname": ""
+  }
 };
-config.runtimeDataModel = JSON.parse('{"models":{"Categories":{"dbName":"category","schema":null,"fields":[{"name":"id","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":true,"type":"String","nativeType":null,"default":{"name":"cuid","args":[1]},"isGenerated":false,"isUpdatedAt":false},{"name":"name","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"meals","kind":"object","isList":true,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"Meal","nativeType":null,"relationName":"CategoriesToMeal","relationFromFields":[],"relationToFields":[],"isGenerated":false,"isUpdatedAt":false}],"primaryKey":null,"uniqueFields":[],"uniqueIndexes":[],"isGenerated":false},"User":{"dbName":"users","schema":null,"fields":[{"name":"id","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"name","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"email","kind":"scalar","isList":false,"isRequired":true,"isUnique":true,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"emailVerified","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"Boolean","nativeType":null,"default":false,"isGenerated":false,"isUpdatedAt":false},{"name":"image","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"createdAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"DateTime","nativeType":null,"default":{"name":"now","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"updatedAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","nativeType":null,"isGenerated":false,"isUpdatedAt":true},{"name":"sessions","kind":"object","isList":true,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"Session","nativeType":null,"relationName":"SessionToUser","relationFromFields":[],"relationToFields":[],"isGenerated":false,"isUpdatedAt":false},{"name":"accounts","kind":"object","isList":true,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"Account","nativeType":null,"relationName":"AccountToUser","relationFromFields":[],"relationToFields":[],"isGenerated":false,"isUpdatedAt":false},{"name":"role","kind":"enum","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"ROLE","nativeType":null,"default":"customer","isGenerated":false,"isUpdatedAt":false},{"name":"status","kind":"enum","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"USERSTATUS","nativeType":null,"default":"activate","isGenerated":false,"isUpdatedAt":false},{"name":"ProviderProfiles","kind":"object","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"ProviderProfiles","nativeType":null,"relationName":"ProviderProfilesToUser","relationFromFields":[],"relationToFields":[],"isGenerated":false,"isUpdatedAt":false},{"name":"reviews","kind":"object","isList":true,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"Review","nativeType":null,"relationName":"ReviewToUser","relationFromFields":[],"relationToFields":[],"isGenerated":false,"isUpdatedAt":false},{"name":"Meal","kind":"object","isList":true,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"Meal","nativeType":null,"relationName":"MealToUser","relationFromFields":[],"relationToFields":[],"isGenerated":false,"isUpdatedAt":false},{"name":"cart","kind":"object","isList":true,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"CartItem","nativeType":null,"relationName":"CartItemToUser","relationFromFields":[],"relationToFields":[],"isGenerated":false,"isUpdatedAt":false}],"primaryKey":null,"uniqueFields":[["email"]],"uniqueIndexes":[{"name":null,"fields":["email"]}],"isGenerated":false},"Session":{"dbName":"session","schema":null,"fields":[{"name":"id","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"expiresAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"token","kind":"scalar","isList":false,"isRequired":true,"isUnique":true,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"createdAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"DateTime","nativeType":null,"default":{"name":"now","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"updatedAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","nativeType":null,"isGenerated":false,"isUpdatedAt":true},{"name":"ipAddress","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"userAgent","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"userId","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":true,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"user","kind":"object","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"User","nativeType":null,"relationName":"SessionToUser","relationFromFields":["userId"],"relationToFields":["id"],"relationOnDelete":"Cascade","isGenerated":false,"isUpdatedAt":false}],"primaryKey":null,"uniqueFields":[["token"]],"uniqueIndexes":[{"name":null,"fields":["token"]}],"isGenerated":false},"Account":{"dbName":"account","schema":null,"fields":[{"name":"id","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"accountId","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"providerId","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"userId","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":true,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"user","kind":"object","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"User","nativeType":null,"relationName":"AccountToUser","relationFromFields":["userId"],"relationToFields":["id"],"relationOnDelete":"Cascade","isGenerated":false,"isUpdatedAt":false},{"name":"accessToken","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"refreshToken","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"idToken","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"accessTokenExpiresAt","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"refreshTokenExpiresAt","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"scope","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"password","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"createdAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"DateTime","nativeType":null,"default":{"name":"now","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"updatedAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","nativeType":null,"isGenerated":false,"isUpdatedAt":true}],"primaryKey":null,"uniqueFields":[],"uniqueIndexes":[],"isGenerated":false},"Verification":{"dbName":"verification","schema":null,"fields":[{"name":"id","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"identifier","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"value","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"expiresAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"createdAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"DateTime","nativeType":null,"default":{"name":"now","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"updatedAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","nativeType":null,"isGenerated":false,"isUpdatedAt":true}],"primaryKey":null,"uniqueFields":[],"uniqueIndexes":[],"isGenerated":false},"ProviderProfiles":{"dbName":null,"schema":null,"fields":[{"name":"id","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":true,"type":"String","nativeType":null,"default":{"name":"cuid","args":[1]},"isGenerated":false,"isUpdatedAt":false},{"name":"userId","kind":"scalar","isList":false,"isRequired":true,"isUnique":true,"isId":false,"isReadOnly":true,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"user","kind":"object","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"User","nativeType":null,"relationName":"ProviderProfilesToUser","relationFromFields":["userId"],"relationToFields":["id"],"relationOnDelete":"Cascade","relationOnUpdate":"Cascade","isGenerated":false,"isUpdatedAt":false},{"name":"restaurantName","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"description","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"phone","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"address","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"openingTime","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"closingTime","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"isOpen","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"Boolean","nativeType":null,"default":true,"isGenerated":false,"isUpdatedAt":false},{"name":"createdAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"DateTime","nativeType":null,"default":{"name":"now","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"updatedAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","nativeType":null,"isGenerated":false,"isUpdatedAt":true}],"primaryKey":null,"uniqueFields":[],"uniqueIndexes":[],"isGenerated":false},"Meal":{"dbName":"meals","schema":null,"fields":[{"name":"id","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":true,"type":"String","nativeType":null,"default":{"name":"cuid","args":[1]},"isGenerated":false,"isUpdatedAt":false},{"name":"name","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"description","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"price","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"Int","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"image","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"isAvailable","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"Boolean","nativeType":null,"default":true,"isGenerated":false,"isUpdatedAt":false},{"name":"providerId","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":true,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"provider","kind":"object","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"User","nativeType":null,"relationName":"MealToUser","relationFromFields":["providerId"],"relationToFields":["id"],"relationOnDelete":"Cascade","relationOnUpdate":"Cascade","isGenerated":false,"isUpdatedAt":false},{"name":"categoryId","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":true,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"category","kind":"object","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"Categories","nativeType":null,"relationName":"CategoriesToMeal","relationFromFields":["categoryId"],"relationToFields":["id"],"relationOnDelete":"Cascade","relationOnUpdate":"Cascade","isGenerated":false,"isUpdatedAt":false},{"name":"dietaryPreferences","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"rating","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"Float","nativeType":null,"default":0,"isGenerated":false,"isUpdatedAt":false},{"name":"Cart","kind":"object","isList":true,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"CartItem","nativeType":null,"relationName":"CartItemToMeal","relationFromFields":[],"relationToFields":[],"isGenerated":false,"isUpdatedAt":false},{"name":"createdAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"DateTime","nativeType":null,"default":{"name":"now","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"updatedAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","nativeType":null,"isGenerated":false,"isUpdatedAt":true},{"name":"reviews","kind":"object","isList":true,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"Review","nativeType":null,"relationName":"MealToReview","relationFromFields":[],"relationToFields":[],"isGenerated":false,"isUpdatedAt":false}],"primaryKey":null,"uniqueFields":[["id"]],"uniqueIndexes":[{"name":null,"fields":["id"]}],"isGenerated":false},"Review":{"dbName":"reviews","schema":null,"fields":[{"name":"id","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":true,"type":"String","nativeType":null,"default":{"name":"cuid","args":[1]},"isGenerated":false,"isUpdatedAt":false},{"name":"userId","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":true,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"user","kind":"object","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"User","nativeType":null,"relationName":"ReviewToUser","relationFromFields":["userId"],"relationToFields":["id"],"relationOnDelete":"Cascade","isGenerated":false,"isUpdatedAt":false},{"name":"mealId","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":true,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"meal","kind":"object","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"Meal","nativeType":null,"relationName":"MealToReview","relationFromFields":["mealId"],"relationToFields":["id"],"relationOnDelete":"Cascade","isGenerated":false,"isUpdatedAt":false},{"name":"rating","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"Float","nativeType":null,"default":0,"isGenerated":false,"isUpdatedAt":false},{"name":"comment","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"createdAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"DateTime","nativeType":null,"default":{"name":"now","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"updatedAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","nativeType":null,"isGenerated":false,"isUpdatedAt":true}],"primaryKey":null,"uniqueFields":[],"uniqueIndexes":[],"isGenerated":false},"Order":{"dbName":"orders","schema":null,"fields":[{"name":"id","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":true,"type":"String","nativeType":null,"default":{"name":"cuid","args":[1]},"isGenerated":false,"isUpdatedAt":false},{"name":"customerId","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"items","kind":"object","isList":true,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"CartItem","nativeType":null,"relationName":"CartItemToOrder","relationFromFields":[],"relationToFields":[],"isGenerated":false,"isUpdatedAt":false},{"name":"status","kind":"enum","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"ORDERSTATUS","nativeType":null,"default":"PLACED","isGenerated":false,"isUpdatedAt":false},{"name":"totalAmount","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"Int","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"deliveryAddress","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"paymentMethod","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"String","nativeType":null,"default":"Cash On Delivery","isGenerated":false,"isUpdatedAt":false},{"name":"createdAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"DateTime","nativeType":null,"default":{"name":"now","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"updatedAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","nativeType":null,"isGenerated":false,"isUpdatedAt":true}],"primaryKey":null,"uniqueFields":[],"uniqueIndexes":[],"isGenerated":false},"CartItem":{"dbName":"cart_items","schema":null,"fields":[{"name":"id","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":true,"type":"String","nativeType":null,"default":{"name":"cuid","args":[1]},"isGenerated":false,"isUpdatedAt":false},{"name":"userId","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":true,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"user","kind":"object","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"User","nativeType":null,"relationName":"CartItemToUser","relationFromFields":["userId"],"relationToFields":["id"],"relationOnDelete":"Cascade","relationOnUpdate":"Cascade","isGenerated":false,"isUpdatedAt":false},{"name":"mealId","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":true,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"meal","kind":"object","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"Meal","nativeType":null,"relationName":"CartItemToMeal","relationFromFields":["mealId"],"relationToFields":["id"],"relationOnDelete":"Cascade","relationOnUpdate":"Cascade","isGenerated":false,"isUpdatedAt":false},{"name":"orderId","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":true,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"orders","kind":"object","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"Order","nativeType":null,"relationName":"CartItemToOrder","relationFromFields":["orderId"],"relationToFields":["id"],"relationOnDelete":"Cascade","relationOnUpdate":"Cascade","isGenerated":false,"isUpdatedAt":false},{"name":"isReviewed","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"Boolean","nativeType":null,"default":false,"isGenerated":false,"isUpdatedAt":false},{"name":"quantity","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"Int","nativeType":null,"isGenerated":false,"isUpdatedAt":false}],"primaryKey":null,"uniqueFields":[],"uniqueIndexes":[],"isGenerated":false}},"enums":{"ROLE":{"values":[{"name":"customer","dbName":null},{"name":"provider","dbName":null},{"name":"admin","dbName":null}],"dbName":null},"USERSTATUS":{"values":[{"name":"suspend","dbName":null},{"name":"activate","dbName":null}],"dbName":null},"ORDERSTATUS":{"values":[{"name":"PLACED","dbName":null},{"name":"PREPARING","dbName":null},{"name":"READY","dbName":null},{"name":"DELIVERED","dbName":null},{"name":"CANCELLED","dbName":null}],"dbName":null}},"types":{}}');
-config.engineWasm = void 0;
-config.compilerWasm = void 0;
-function getPrismaClientClass(dirname2) {
-  config.dirname = dirname2;
+config.runtimeDataModel = JSON.parse('{"models":{"Categories":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"name","kind":"scalar","type":"String"},{"name":"meals","kind":"object","type":"Meal","relationName":"CategoriesToMeal"}],"dbName":"category"},"User":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"name","kind":"scalar","type":"String"},{"name":"email","kind":"scalar","type":"String"},{"name":"emailVerified","kind":"scalar","type":"Boolean"},{"name":"image","kind":"scalar","type":"String"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"},{"name":"sessions","kind":"object","type":"Session","relationName":"SessionToUser"},{"name":"accounts","kind":"object","type":"Account","relationName":"AccountToUser"},{"name":"role","kind":"enum","type":"ROLE"},{"name":"status","kind":"enum","type":"USERSTATUS"},{"name":"ProviderProfiles","kind":"object","type":"ProviderProfiles","relationName":"ProviderProfilesToUser"},{"name":"reviews","kind":"object","type":"Review","relationName":"ReviewToUser"},{"name":"Meal","kind":"object","type":"Meal","relationName":"MealToUser"},{"name":"cart","kind":"object","type":"CartItem","relationName":"CartItemToUser"}],"dbName":"users"},"Session":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"expiresAt","kind":"scalar","type":"DateTime"},{"name":"token","kind":"scalar","type":"String"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"},{"name":"ipAddress","kind":"scalar","type":"String"},{"name":"userAgent","kind":"scalar","type":"String"},{"name":"userId","kind":"scalar","type":"String"},{"name":"user","kind":"object","type":"User","relationName":"SessionToUser"}],"dbName":"session"},"Account":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"accountId","kind":"scalar","type":"String"},{"name":"providerId","kind":"scalar","type":"String"},{"name":"userId","kind":"scalar","type":"String"},{"name":"user","kind":"object","type":"User","relationName":"AccountToUser"},{"name":"accessToken","kind":"scalar","type":"String"},{"name":"refreshToken","kind":"scalar","type":"String"},{"name":"idToken","kind":"scalar","type":"String"},{"name":"accessTokenExpiresAt","kind":"scalar","type":"DateTime"},{"name":"refreshTokenExpiresAt","kind":"scalar","type":"DateTime"},{"name":"scope","kind":"scalar","type":"String"},{"name":"password","kind":"scalar","type":"String"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"}],"dbName":"account"},"Verification":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"identifier","kind":"scalar","type":"String"},{"name":"value","kind":"scalar","type":"String"},{"name":"expiresAt","kind":"scalar","type":"DateTime"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"}],"dbName":"verification"},"ProviderProfiles":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"userId","kind":"scalar","type":"String"},{"name":"user","kind":"object","type":"User","relationName":"ProviderProfilesToUser"},{"name":"restaurantName","kind":"scalar","type":"String"},{"name":"description","kind":"scalar","type":"String"},{"name":"phone","kind":"scalar","type":"String"},{"name":"address","kind":"scalar","type":"String"},{"name":"openingTime","kind":"scalar","type":"String"},{"name":"closingTime","kind":"scalar","type":"String"},{"name":"isOpen","kind":"scalar","type":"Boolean"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"}],"dbName":null},"Meal":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"name","kind":"scalar","type":"String"},{"name":"description","kind":"scalar","type":"String"},{"name":"price","kind":"scalar","type":"Int"},{"name":"image","kind":"scalar","type":"String"},{"name":"isAvailable","kind":"scalar","type":"Boolean"},{"name":"providerId","kind":"scalar","type":"String"},{"name":"provider","kind":"object","type":"User","relationName":"MealToUser"},{"name":"categoryId","kind":"scalar","type":"String"},{"name":"category","kind":"object","type":"Categories","relationName":"CategoriesToMeal"},{"name":"dietaryPreferences","kind":"scalar","type":"String"},{"name":"rating","kind":"scalar","type":"Float"},{"name":"Cart","kind":"object","type":"CartItem","relationName":"CartItemToMeal"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"},{"name":"reviews","kind":"object","type":"Review","relationName":"MealToReview"}],"dbName":"meals"},"Review":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"userId","kind":"scalar","type":"String"},{"name":"user","kind":"object","type":"User","relationName":"ReviewToUser"},{"name":"mealId","kind":"scalar","type":"String"},{"name":"meal","kind":"object","type":"Meal","relationName":"MealToReview"},{"name":"rating","kind":"scalar","type":"Float"},{"name":"comment","kind":"scalar","type":"String"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"}],"dbName":"reviews"},"Order":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"customerId","kind":"scalar","type":"String"},{"name":"items","kind":"object","type":"CartItem","relationName":"CartItemToOrder"},{"name":"status","kind":"enum","type":"ORDERSTATUS"},{"name":"totalAmount","kind":"scalar","type":"Int"},{"name":"deliveryAddress","kind":"scalar","type":"String"},{"name":"paymentMethod","kind":"scalar","type":"String"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"}],"dbName":"orders"},"CartItem":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"userId","kind":"scalar","type":"String"},{"name":"user","kind":"object","type":"User","relationName":"CartItemToUser"},{"name":"mealId","kind":"scalar","type":"String"},{"name":"meal","kind":"object","type":"Meal","relationName":"CartItemToMeal"},{"name":"orderId","kind":"scalar","type":"String"},{"name":"orders","kind":"object","type":"Order","relationName":"CartItemToOrder"},{"name":"isReviewed","kind":"scalar","type":"Boolean"},{"name":"quantity","kind":"scalar","type":"Int"}],"dbName":"cart_items"}},"enums":{},"types":{}}');
+async function decodeBase64AsWasm(wasmBase64) {
+  const { Buffer: Buffer2 } = await import("buffer");
+  const wasmArray = Buffer2.from(wasmBase64, "base64");
+  return new WebAssembly.Module(wasmArray);
+}
+config.compilerWasm = {
+  getRuntime: async () => await import("@prisma/client/runtime/query_compiler_fast_bg.postgresql.mjs"),
+  getQueryCompilerWasmModule: async () => {
+    const { wasm } = await import("@prisma/client/runtime/query_compiler_fast_bg.postgresql.wasm-base64.mjs");
+    return await decodeBase64AsWasm(wasm);
+  },
+  importName: "./query_compiler_fast_bg.js"
+};
+function getPrismaClientClass() {
   return runtime.getPrismaClient(config);
 }
 
@@ -112,15 +79,15 @@ function getPrismaClientClass(dirname2) {
 var prismaNamespace_exports = {};
 __export(prismaNamespace_exports, {
   AccountScalarFieldEnum: () => AccountScalarFieldEnum,
-  AnyNull: () => AnyNull,
+  AnyNull: () => AnyNull2,
   CartItemScalarFieldEnum: () => CartItemScalarFieldEnum,
   CategoriesScalarFieldEnum: () => CategoriesScalarFieldEnum,
-  DbNull: () => DbNull,
+  DbNull: () => DbNull2,
   Decimal: () => Decimal2,
-  JsonNull: () => JsonNull,
+  JsonNull: () => JsonNull2,
   MealScalarFieldEnum: () => MealScalarFieldEnum,
   ModelName: () => ModelName,
-  NullTypes: () => NullTypes,
+  NullTypes: () => NullTypes2,
   NullsOrder: () => NullsOrder,
   OrderScalarFieldEnum: () => OrderScalarFieldEnum,
   PrismaClientInitializationError: () => PrismaClientInitializationError2,
@@ -145,7 +112,7 @@ __export(prismaNamespace_exports, {
   raw: () => raw2,
   sql: () => sql
 });
-import * as runtime2 from "@prisma/client/runtime/library";
+import * as runtime2 from "@prisma/client/runtime/client";
 var PrismaClientKnownRequestError2 = runtime2.PrismaClientKnownRequestError;
 var PrismaClientUnknownRequestError2 = runtime2.PrismaClientUnknownRequestError;
 var PrismaClientRustPanicError2 = runtime2.PrismaClientRustPanicError;
@@ -159,17 +126,17 @@ var Sql2 = runtime2.Sql;
 var Decimal2 = runtime2.Decimal;
 var getExtensionContext = runtime2.Extensions.getExtensionContext;
 var prismaVersion = {
-  client: "6.19.2",
-  engine: "c2990dca591cba766e3b7ef5d9e8a84796e47ab7"
+  client: "7.3.0",
+  engine: "9d6ad21cbbceab97458517b147a6a09ff43aa735"
 };
-var NullTypes = {
-  DbNull: runtime2.objectEnumValues.classes.DbNull,
-  JsonNull: runtime2.objectEnumValues.classes.JsonNull,
-  AnyNull: runtime2.objectEnumValues.classes.AnyNull
+var NullTypes2 = {
+  DbNull: runtime2.NullTypes.DbNull,
+  JsonNull: runtime2.NullTypes.JsonNull,
+  AnyNull: runtime2.NullTypes.AnyNull
 };
-var DbNull = runtime2.objectEnumValues.instances.DbNull;
-var JsonNull = runtime2.objectEnumValues.instances.JsonNull;
-var AnyNull = runtime2.objectEnumValues.instances.AnyNull;
+var DbNull2 = runtime2.DbNull;
+var JsonNull2 = runtime2.JsonNull;
+var AnyNull2 = runtime2.AnyNull;
 var ModelName = {
   Categories: "Categories",
   User: "User",
@@ -306,11 +273,7 @@ var defineExtension = runtime2.Extensions.defineExtension;
 
 // generated/prisma/client.ts
 globalThis["__dirname"] = path.dirname(fileURLToPath(import.meta.url));
-var PrismaClient = getPrismaClientClass(__dirname);
-path.join(__dirname, "libquery_engine-debian-openssl-3.0.x.so.node");
-path.join(process2.cwd(), "generated/prisma/libquery_engine-debian-openssl-3.0.x.so.node");
-path.join(__dirname, "libquery_engine-rhel-openssl-3.0.x.so.node");
-path.join(process2.cwd(), "generated/prisma/libquery_engine-rhel-openssl-3.0.x.so.node");
+var PrismaClient = getPrismaClientClass();
 
 // src/middleware/globalErrorHandler.ts
 function errorHandler(err, req, res, next) {
@@ -355,7 +318,15 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import nodemailer from "nodemailer";
 import { customSession } from "better-auth/plugins";
-var prisma = new PrismaClient();
+
+// src/lib/prisma.ts
+import "dotenv/config";
+import { PrismaPg } from "@prisma/adapter-pg";
+var connectionString = `${process.env.DATABASE_URL}`;
+var adapter = new PrismaPg({ connectionString });
+var prisma = new PrismaClient({ adapter });
+
+// src/lib/auth.ts
 var transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
   port: 465,
@@ -369,13 +340,18 @@ var auth = betterAuth({
   database: prismaAdapter(prisma, {
     provider: "postgresql"
   }),
-  trustedOrigins: ["http://localhost:3000"],
-  //   session: {
-  //     cookieCache: {
-  //         enabled: true,
-  //         maxAge: 5 * 60 // Cache duration in seconds (5 minutes)
-  //     }
-  // },
+  trustedOrigins: ["http://localhost:3000", "https://assignment4-frontend-tau.vercel.app"],
+  session: {
+    cookieCache: {
+      enabled: true,
+      maxAge: 5 * 60
+      // 5 minutes
+    }
+  },
+  advanced: {
+    cookiePrefix: "__Secure-better-auth.",
+    useSecureCookies: process.env.NODE_ENV === "production"
+  },
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: true
@@ -480,16 +456,12 @@ var auth = betterAuth({
   ]
 });
 
-// src/lib/prisma.ts
-import "dotenv/config";
-var prisma2 = new PrismaClient();
-
 // src/modules/auth/auth.service.ts
 var resister = async (payload) => {
   try {
     const data = await auth.api.signUpEmail({ body: payload });
     if (data?.user?.id) {
-      const updateData = await prisma2.user.update({
+      const updateData = await prisma.user.update({
         where: {
           id: data?.user?.id
         },
@@ -522,7 +494,7 @@ var login = async (payload, res) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Origin": "http://localhost:3000"
+        "Origin": "https://assignment4-frontend-tau.vercel.app"
       },
       credentials: "include",
       body: JSON.stringify(payload)
@@ -533,7 +505,7 @@ var login = async (payload, res) => {
       if (setCookie) {
         res.setHeader("Set-Cookie", setCookie);
       }
-      const userdata = await prisma2.user.findUnique({ where: { id: data?.user?.id } });
+      const userdata = await prisma.user.findUnique({ where: { id: data?.user?.id } });
       return {
         success: true,
         data: { ...userdata },
@@ -554,7 +526,7 @@ var login = async (payload, res) => {
   }
 };
 var getProfile = async (userdata) => {
-  const data = await prisma2.user.findUnique({
+  const data = await prisma.user.findUnique({
     where: { id: userdata?.id }
   });
   if (data?.role !== userdata?.role) {
@@ -566,7 +538,7 @@ var getProfile = async (userdata) => {
     };
   }
   if (data?.role === ROLE.provider && userdata?.role === ROLE.provider) {
-    const providerdata = await prisma2.providerProfiles.findUnique({
+    const providerdata = await prisma.providerProfiles.findUnique({
       where: { userId: data?.id }
     });
     return {
@@ -591,7 +563,7 @@ var updateProfile = async (userdata, payload) => {
       data: userdata
     };
   }
-  const data = await prisma2.user.findUnique({
+  const data = await prisma.user.findUnique({
     where: { id: userdata?.id }
   });
   if (data?.role !== userdata?.role) {
@@ -602,7 +574,7 @@ var updateProfile = async (userdata, payload) => {
       data
     };
   }
-  const updateData = await prisma2.user.update({
+  const updateData = await prisma.user.update({
     where: { id: payload?.id },
     data: { ...payload }
   });
@@ -718,7 +690,7 @@ import { Router as Router2 } from "express";
 
 // src/modules/provider/provider.service.ts
 var updateOrCreateProvider = async (payload) => {
-  const updateData = await prisma2.providerProfiles.upsert({
+  const updateData = await prisma.providerProfiles.upsert({
     where: { userId: payload.userId },
     update: {
       restaurantName: payload.restaurantName,
@@ -754,7 +726,7 @@ var updateOrCreateProvider = async (payload) => {
   };
 };
 var getProviderProfile = async (id) => {
-  const data = await prisma2.providerProfiles.findUnique({
+  const data = await prisma.providerProfiles.findUnique({
     where: { userId: id }
   });
   if (data) {
@@ -769,7 +741,7 @@ var getProviderProfile = async (id) => {
   };
 };
 var providerDashboard = async (id) => {
-  const totalOrders = await prisma2.order.aggregate({
+  const totalOrders = await prisma.order.aggregate({
     where: {
       items: {
         some: {
@@ -787,7 +759,7 @@ var providerDashboard = async (id) => {
       totalAmount: true
     }
   });
-  const deliveredOrders = await prisma2.order.aggregate({
+  const deliveredOrders = await prisma.order.aggregate({
     where: {
       items: {
         some: {
@@ -924,12 +896,12 @@ var getAllUser = async (page, limit, skip, search, status) => {
   if (status) {
     anyConditions.push({ status });
   }
-  const data = await prisma2.user.findMany({
+  const data = await prisma.user.findMany({
     skip,
     take: limit,
     where: { AND: anyConditions }
   });
-  const total = await prisma2.user.count({
+  const total = await prisma.user.count({
     where: { AND: anyConditions }
   });
   return {
@@ -944,7 +916,7 @@ var getAllUser = async (page, limit, skip, search, status) => {
   };
 };
 var updateStatus = async (data) => {
-  const findUSER = await prisma2.user.findUnique({ where: { id: data?.id } });
+  const findUSER = await prisma.user.findUnique({ where: { id: data?.id } });
   let status = findUSER?.status;
   let userStatus;
   if (status === USERSTATUS.activate) {
@@ -952,7 +924,7 @@ var updateStatus = async (data) => {
   } else {
     userStatus = USERSTATUS.activate;
   }
-  const updateData = await prisma2.user.update({
+  const updateData = await prisma.user.update({
     where: { id: data?.id },
     data: { status: userStatus }
   });
@@ -1038,7 +1010,7 @@ import { Router as Router4 } from "express";
 
 // src/modules/meals/category/meals.category.service.ts
 var addCategory = async (data) => {
-  const insertdata = await prisma2.categories.create({ data });
+  const insertdata = await prisma.categories.create({ data });
   if (insertdata?.id) {
     return {
       success: true,
@@ -1053,9 +1025,9 @@ var addCategory = async (data) => {
   };
 };
 var updateCategory = async (id, data) => {
-  const findCategory = await prisma2.categories.findUnique({ where: { id } });
+  const findCategory = await prisma.categories.findUnique({ where: { id } });
   if (findCategory) {
-    const updateData = await prisma2.categories.update({ where: { id }, data: { name: data?.name } });
+    const updateData = await prisma.categories.update({ where: { id }, data: { name: data?.name } });
     return {
       success: true,
       message: "Category updated successfully",
@@ -1069,9 +1041,9 @@ var updateCategory = async (id, data) => {
   };
 };
 var deleteCategory = async (id) => {
-  const findCategory = await prisma2.categories.findUnique({ where: { id } });
+  const findCategory = await prisma.categories.findUnique({ where: { id } });
   if (findCategory) {
-    const deleteData = await prisma2.categories.delete({ where: { id } });
+    const deleteData = await prisma.categories.delete({ where: { id } });
     return {
       success: true,
       message: "Category deleted successfully",
@@ -1085,7 +1057,7 @@ var deleteCategory = async (id) => {
   };
 };
 var getAllCategory = async () => {
-  const findCategoryAll = await prisma2.categories.findMany({});
+  const findCategoryAll = await prisma.categories.findMany({});
   return {
     success: true,
     data: findCategoryAll
@@ -1191,7 +1163,7 @@ import { Router as Router5 } from "express";
 
 // src/modules/meals/meals.service.ts
 var addMeal = async (data) => {
-  const insertdata = await prisma2.meal.create({ data });
+  const insertdata = await prisma.meal.create({ data });
   if (insertdata?.id) {
     return {
       success: true,
@@ -1206,9 +1178,9 @@ var addMeal = async (data) => {
   };
 };
 var updateMeal = async (id, data) => {
-  const findCategory = await prisma2.meal.findUnique({ where: { id } });
+  const findCategory = await prisma.meal.findUnique({ where: { id } });
   if (findCategory) {
-    const updateData = await prisma2.meal.update({
+    const updateData = await prisma.meal.update({
       where: { id },
       data: { ...data }
     });
@@ -1225,9 +1197,9 @@ var updateMeal = async (id, data) => {
   };
 };
 var deleteMeal = async (id) => {
-  const findCategory = await prisma2.meal.findUnique({ where: { id } });
+  const findCategory = await prisma.meal.findUnique({ where: { id } });
   if (findCategory) {
-    const deleteData = await prisma2.meal.delete({ where: { id } });
+    const deleteData = await prisma.meal.delete({ where: { id } });
     return {
       success: true,
       message: "Meal deleted successfully",
@@ -1264,7 +1236,7 @@ var getAllMeal = async (category, dietaryPreference, priceNumber, page, limit, s
     anyConditions.push({ price: priceNumber });
   }
   anyConditions.push({ isAvailable: true });
-  const data = await prisma2.meal.findMany({
+  const data = await prisma.meal.findMany({
     skip,
     take: limit,
     where: { AND: anyConditions },
@@ -1278,7 +1250,7 @@ var getAllMeal = async (category, dietaryPreference, priceNumber, page, limit, s
       reviews: true
     }
   });
-  const total = await prisma2.meal.count({
+  const total = await prisma.meal.count({
     where: { AND: anyConditions }
   });
   return {
@@ -1316,7 +1288,7 @@ var getAllMealProvider = async (category, dietaryPreference, priceNumber, page, 
   if (priceNumber) {
     anyConditions.push({ price: priceNumber });
   }
-  const data = await prisma2.meal.findMany({
+  const data = await prisma.meal.findMany({
     skip,
     take: limit,
     where: { AND: anyConditions },
@@ -1330,7 +1302,7 @@ var getAllMealProvider = async (category, dietaryPreference, priceNumber, page, 
       reviews: true
     }
   });
-  const total = await prisma2.meal.count({
+  const total = await prisma.meal.count({
     where: { AND: anyConditions }
   });
   return {
@@ -1345,7 +1317,7 @@ var getAllMealProvider = async (category, dietaryPreference, priceNumber, page, 
   };
 };
 var getMealById = async (id) => {
-  const data = await prisma2.meal.findUnique({
+  const data = await prisma.meal.findUnique({
     where: { id },
     include: {
       provider: {
@@ -1521,7 +1493,7 @@ import { Router as Router6 } from "express";
 
 // src/modules/cart/cart.service.ts
 var addCart = async (data) => {
-  const addCartItem = await prisma2.cartItem.create({ data });
+  const addCartItem = await prisma.cartItem.create({ data });
   if (addCartItem?.id) {
     return {
       success: true,
@@ -1536,13 +1508,13 @@ var addCart = async (data) => {
   };
 };
 var editCart = async (CartId, data) => {
-  const existItemIntoCart = await prisma2.cartItem.findUnique({
+  const existItemIntoCart = await prisma.cartItem.findUnique({
     where: { id: CartId }
   });
   if (existItemIntoCart?.id) {
     const newQuantity = existItemIntoCart.quantity + data?.quantity;
     const { quantity, ...rest } = existItemIntoCart;
-    const updateCart = await prisma2.cartItem.update({
+    const updateCart = await prisma.cartItem.update({
       where: { id: CartId, orderId: null },
       data: { quantity: data?.quantity, ...rest }
     });
@@ -1561,7 +1533,7 @@ var editCart = async (CartId, data) => {
   };
 };
 var deleteCart = async (cartId) => {
-  const deleteCart3 = await prisma2.cartItem.delete({
+  const deleteCart3 = await prisma.cartItem.delete({
     where: { id: cartId }
   });
   if (deleteCart3?.id) {
@@ -1578,7 +1550,7 @@ var deleteCart = async (cartId) => {
   };
 };
 var getCart = async (userId) => {
-  const getCartData = await prisma2.cartItem.findMany({ where: { userId, orderId: null }, include: { user: true, meal: true } });
+  const getCartData = await prisma.cartItem.findMany({ where: { userId, orderId: null }, include: { user: true, meal: true } });
   return {
     success: true,
     data: getCartData
@@ -1678,7 +1650,7 @@ import { Router as Router7 } from "express";
 
 // src/modules/order/order.service.ts
 var createOrder = async ({ userId, deliveryAddress }) => {
-  return await prisma2.$transaction(async (tx) => {
+  return await prisma.$transaction(async (tx) => {
     const cartItems = await tx.cartItem.findMany({
       where: {
         userId,
@@ -1728,7 +1700,7 @@ var createOrder = async ({ userId, deliveryAddress }) => {
 var getOrder = async (page, limit, skip, sortBy, sortOrder, user) => {
   let findData, total;
   if (user?.role === ROLE.customer) {
-    findData = await prisma2.order.findMany({
+    findData = await prisma.order.findMany({
       skip,
       take: limit,
       orderBy: sortBy && sortOrder ? { [sortBy]: sortOrder } : { createdAt: "desc" },
@@ -1743,11 +1715,11 @@ var getOrder = async (page, limit, skip, sortBy, sortOrder, user) => {
         }
       }
     });
-    total = await prisma2.order.count({
+    total = await prisma.order.count({
       where: { customerId: user?.id }
     });
   } else if (user?.role === ROLE.provider) {
-    findData = await prisma2.order.findMany({
+    findData = await prisma.order.findMany({
       skip,
       take: limit,
       orderBy: sortBy && sortOrder ? { [sortBy]: sortOrder } : { createdAt: "desc" },
@@ -1781,7 +1753,7 @@ var getOrder = async (page, limit, skip, sortBy, sortOrder, user) => {
         }
       }
     });
-    total = await prisma2.order.count({
+    total = await prisma.order.count({
       where: {
         items: {
           some: {
@@ -1791,7 +1763,7 @@ var getOrder = async (page, limit, skip, sortBy, sortOrder, user) => {
       }
     });
   } else if (user?.role === ROLE.admin) {
-    findData = await prisma2.order.findMany({
+    findData = await prisma.order.findMany({
       skip,
       take: limit,
       orderBy: sortBy && sortOrder ? { [sortBy]: sortOrder } : { createdAt: "desc" },
@@ -1805,7 +1777,7 @@ var getOrder = async (page, limit, skip, sortBy, sortOrder, user) => {
         }
       }
     });
-    total = await prisma2.order.count({});
+    total = await prisma.order.count({});
   }
   if (findData) {
     return {
@@ -1827,7 +1799,7 @@ var getOrder = async (page, limit, skip, sortBy, sortOrder, user) => {
 var updateOrder = async (id, authenticator, data) => {
   let findOrder;
   if (authenticator?.role === ROLE.customer) {
-    findOrder = await prisma2.order.findFirst({
+    findOrder = await prisma.order.findFirst({
       where: { id, customerId: authenticator?.id }
     });
     if (!findOrder || data?.status != ORDERSTATUS.CANCELLED) {
@@ -1838,7 +1810,7 @@ var updateOrder = async (id, authenticator, data) => {
       };
     }
   } else if (authenticator?.role === ROLE.provider) {
-    findOrder = await prisma2.order.findFirst({
+    findOrder = await prisma.order.findFirst({
       where: {
         id,
         items: {
@@ -1859,7 +1831,7 @@ var updateOrder = async (id, authenticator, data) => {
     }
   }
   const status = ORDERSTATUS[data.status];
-  const updateData = await prisma2.order.update({
+  const updateData = await prisma.order.update({
     where: { id },
     data: { status }
   });
@@ -1877,7 +1849,7 @@ var updateOrder = async (id, authenticator, data) => {
   };
 };
 var getSingleOrder = async (id) => {
-  const findOrder = await prisma2.order.findUnique({
+  const findOrder = await prisma.order.findUnique({
     where: { id },
     include: {
       items: {
@@ -1890,7 +1862,7 @@ var getSingleOrder = async (id) => {
     }
   });
   if (findOrder) {
-    const userdata = await prisma2.user.findUnique({ where: { id: findOrder?.customerId } });
+    const userdata = await prisma.user.findUnique({ where: { id: findOrder?.customerId } });
     return { success: true, data: { ...findOrder, userdata } };
   }
   return {
@@ -1899,7 +1871,7 @@ var getSingleOrder = async (id) => {
   };
 };
 var deleteOrder = async (id) => {
-  const deleteOrder3 = await prisma2.order.delete({ where: { id } });
+  const deleteOrder3 = await prisma.order.delete({ where: { id } });
   if (deleteOrder3) {
     return { success: true, data: deleteOrder3, message: "Order deleted successfully" };
   }
@@ -2016,7 +1988,7 @@ import { Router as Router8 } from "express";
 
 // src/modules/review/review.service.ts
 var addReview = async (user, payload) => {
-  const findOrder = await prisma2.order.findFirst({
+  const findOrder = await prisma.order.findFirst({
     where: {
       id: payload?.orderId,
       customerId: user?.id,
@@ -2026,7 +1998,7 @@ var addReview = async (user, payload) => {
   if (!findOrder) {
     return { success: false, message: "Order not found to review", data: null };
   }
-  const alreadyReviewed = await prisma2.cartItem.findFirst({
+  const alreadyReviewed = await prisma.cartItem.findFirst({
     where: {
       orderId: payload?.orderId,
       mealId: payload?.mealId,
@@ -2041,7 +2013,7 @@ var addReview = async (user, payload) => {
       message: "Already reviewed"
     };
   }
-  const findMeal = await prisma2.order.findFirst({
+  const findMeal = await prisma.order.findFirst({
     where: { customerId: user?.id, status: ORDERSTATUS.DELIVERED },
     include: { items: { where: { mealId: payload.mealId } } }
   });
@@ -2049,10 +2021,10 @@ var addReview = async (user, payload) => {
     return { success: false, message: "Meal not found to review", data: null };
   }
   console.log("review payload", payload);
-  const addReviewData = await prisma2.review.create({ data: { userId: payload?.userId, mealId: payload?.mealId, rating: payload?.rating, comment: payload?.comment } });
+  const addReviewData = await prisma.review.create({ data: { userId: payload?.userId, mealId: payload?.mealId, rating: payload?.rating, comment: payload?.comment } });
   console.log("addReviewData", addReviewData);
   if (addReviewData) {
-    const result = await prisma2.review.aggregate({
+    const result = await prisma.review.aggregate({
       where: { mealId: payload?.mealId },
       _avg: { rating: true },
       _count: { rating: true }
@@ -2060,14 +2032,14 @@ var addReview = async (user, payload) => {
     const avgRating = result._avg.rating ?? 0;
     const displayRating = Number(avgRating.toFixed(1));
     if (displayRating) {
-      const updateRating = await prisma2.meal.update({
+      const updateRating = await prisma.meal.update({
         where: { id: payload.mealId },
         data: { rating: displayRating }
       });
       if (updateRating) {
-        const findCart = await prisma2.cartItem.findFirst({ where: { orderId: payload?.mealId, mealId: payload?.mealId } });
+        const findCart = await prisma.cartItem.findFirst({ where: { orderId: payload?.mealId, mealId: payload?.mealId } });
         if (findCart) {
-          await prisma2.cartItem.update({
+          await prisma.cartItem.update({
             where: { id: findCart?.id },
             data: { isReviewed: true }
           });
@@ -2087,25 +2059,25 @@ var addReview = async (user, payload) => {
   };
 };
 var editReview = async (id, user, payload) => {
-  const findOrder = await prisma2.order.findFirst({
+  const findOrder = await prisma.order.findFirst({
     where: { customerId: user?.id, status: ORDERSTATUS.DELIVERED }
   });
   if (!findOrder) {
     return { success: false, message: "Order not found to review", data: null };
   }
-  const findMeal = await prisma2.order.findFirst({
+  const findMeal = await prisma.order.findFirst({
     where: { customerId: user?.id, status: ORDERSTATUS.DELIVERED },
     include: { items: { where: { mealId: payload.mealId } } }
   });
   if (!findMeal) {
     return { success: false, message: "Meal not found to review", data: null };
   }
-  const addReviewData = await prisma2.review.update({
+  const addReviewData = await prisma.review.update({
     where: { id },
     data: payload
   });
   if (addReviewData) {
-    const result = await prisma2.review.aggregate({
+    const result = await prisma.review.aggregate({
       where: { mealId: payload?.mealId },
       _avg: { rating: true },
       _count: { rating: true }
@@ -2113,7 +2085,7 @@ var editReview = async (id, user, payload) => {
     const avgRating = result._avg.rating ?? 0;
     const displayRating = Number(avgRating.toFixed(1));
     if (displayRating) {
-      const updateRating = await prisma2.meal.update({
+      const updateRating = await prisma.meal.update({
         where: { id: payload.mealId },
         data: { rating: displayRating }
       });
@@ -2133,17 +2105,17 @@ var editReview = async (id, user, payload) => {
   };
 };
 var getAllReview = async (mealId) => {
-  const findAllReview = await prisma2.review.findMany({
+  const findAllReview = await prisma.review.findMany({
     where: { mealId }
   });
   return { success: true, data: findAllReview };
 };
 var deleteReview = async (id, user) => {
-  const findReview = await prisma2.review.findFirst({
+  const findReview = await prisma.review.findFirst({
     where: { id, userId: user?.id }
   });
   if (findReview) {
-    const deleteReview3 = await prisma2.review.delete({ where: { id } });
+    const deleteReview3 = await prisma.review.delete({ where: { id } });
     if (deleteReview3) {
       return {
         success: true,
@@ -2275,10 +2247,28 @@ import { toNodeHandler } from "better-auth/node";
 var app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors({
-  origin: "http://localhost:3000",
-  credentials: true
-}));
+var allowedOrigins = [
+  process.env.APP_URL || "http://localhost:3000",
+  process.env.PROD_APP_URL
+  // Production frontend URL
+].filter(Boolean);
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+      const isAllowed = allowedOrigins.includes(origin) || /^https:\/\/next-blog-client.*\.vercel\.app$/.test(origin) || /^https:\/\/.*\.vercel\.app$/.test(origin);
+      if (isAllowed) {
+        callback(null, true);
+      } else {
+        callback(new Error(`Origin ${origin} not allowed by CORS`));
+      }
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
+    exposedHeaders: ["Set-Cookie"]
+  })
+);
 app.use("/api", routes_default);
 app.all("/api/auth/*splat", toNodeHandler(auth));
 app.get("/", (req, res) => {

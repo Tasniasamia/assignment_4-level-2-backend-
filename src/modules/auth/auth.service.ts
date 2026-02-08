@@ -49,7 +49,7 @@ const responsedata=await fetch(`${process.env.BETTER_AUTH_URL}/api/auth/sign-in/
   method: "POST",
   headers: {
     "Content-Type": "application/json",
-    "Origin":"http://localhost:3000"
+    "Origin":"https://assignment4-frontend-tau.vercel.app"
   },
   credentials: "include", 
   body: JSON.stringify(payload),

@@ -16,14 +16,18 @@ export const auth = betterAuth({
     database: prismaAdapter(prisma, {
         provider: "postgresql", 
     }),
-    trustedOrigins:['http://localhost:3000'],
+    trustedOrigins:['http://localhost:3000','https://assignment4-frontend-tau.vercel.app'],
 
-  //   session: {
-  //     cookieCache: {
-  //         enabled: true,
-  //         maxAge: 5 * 60 // Cache duration in seconds (5 minutes)
-  //     }
-  // },
+    session: {
+      cookieCache: {
+        enabled: true,
+        maxAge: 5 * 60, // 5 minutes
+      },
+    },
+    advanced: {
+      cookiePrefix: "__Secure-better-auth.",
+      useSecureCookies: process.env.NODE_ENV === "production",
+    },  
     emailAndPassword: { 
         enabled: true, 
         requireEmailVerification: true,

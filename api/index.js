@@ -2279,7 +2279,7 @@ app.use(globalErrorHandler_default);
 var app_default = app;
 
 // src/index.ts
-var index_default = app_default;
-export {
-  index_default as default
-};
+var PORT = process.env.PORT || 5750;
+app_default.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});

@@ -18,4 +18,4 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/api ./api
 COPY --from=builder /app/prisma ./prisma
 EXPOSE 5750
-CMD ["node", "--input-type=module", "api/index.js"]
+CMD ["node", "api/index.js"]

@@ -16,6 +16,7 @@ const addMeal = async (req: Request, res: Response, next: NextFunction) => {
     const data = await req.body;
     const result = await mealsService.addMeal(data as MealType);
     if (result?.success) {
+       
       return res.status(201).json(result);
     }
     next(result);
@@ -23,6 +24,7 @@ const addMeal = async (req: Request, res: Response, next: NextFunction) => {
     next(error);
   }
 };
+
 const updateMeal = async (req: Request, res: Response, next: NextFunction) => {
   try {
     if (req.user?.role !== ROLE.provider) {
@@ -45,6 +47,7 @@ const updateMeal = async (req: Request, res: Response, next: NextFunction) => {
     next(error);
   }
 };
+
 const deleteMeal = async (req: Request, res: Response, next: NextFunction)=> {
    try{
     if (req.user?.role !== ROLE.provider) {

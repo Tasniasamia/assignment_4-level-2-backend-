@@ -22,7 +22,9 @@
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "nodemailer": "^7.0.13",
+    "openai": "^6.38.0",
     "pg": "^8.17.2",
+    "redis": "^5.12.1",
     "tsup": "^8.5.1"
   },
   "devDependencies": {

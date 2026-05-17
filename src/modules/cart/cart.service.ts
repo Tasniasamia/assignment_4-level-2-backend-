@@ -1,9 +1,11 @@
 import { prisma } from "../../lib/prisma";
+import { RagService } from "../rag/rag.service";
 import type { TCart } from "./cart.interface";
 
 const addCart = async (data: TCart) => {
   const addCartItem = await prisma.cartItem.create({ data });
   if (addCartItem?.id) {
+    
     return {
       success: true,
       data: addCartItem,
@@ -43,7 +45,8 @@ const editCart = async (CartId: string, data: TCart) => {
       data: { quantity: data?.quantity, ...rest },
     });
     if (updateCart?.id) {
-      return {
+   
+     return {
         success: true,
         message: "Cart Data Updated Successfully",
         data: updateCart,
@@ -61,6 +64,7 @@ const deleteCart=async(cartId:string)=>{
         where:{id:cartId},
     });
     if(deleteCart?.id){
+
         return {
             success:true,
             message:"Cart deleted successfully",

@@ -2,6 +2,7 @@
 
 import { ROLE } from "../../generated/prisma/enums";
 import { prisma } from "../lib/prisma";
+import { RagService } from "../modules/rag/rag.service";
 
 (async()=>{
 try{
@@ -34,7 +35,8 @@ if(response?.ok){
 
         },
       });
-
+  const ragService = new RagService();
+  await ragService.ingestOneAdmin(data.id);
       }
 
 }

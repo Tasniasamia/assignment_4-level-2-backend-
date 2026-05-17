@@ -4,7 +4,9 @@ import { auth } from "../../lib/auth";
 import type { loginData, resisterData, updateUserType, userType } from "./auth.interface";
 import { prisma } from "../../lib/prisma";
 import { ROLE } from "../../../generated/prisma/enums";
+import { RagService } from "../rag/rag.service";
 
+const ragService=new RagService()
 const resister = async (payload: resisterData) => {
   try{
   const data = await auth.api.signUpEmail({ body: payload });
@@ -18,7 +20,13 @@ const resister = async (payload: resisterData) => {
         role: payload.role,
       },
     });
-        return {
+    if(updateData?.id && payload?.role === ROLE.customer){
+      await ragService.ingestOneCustomer(updateData?.id as string);
+    }
+      if(updateData?.id && payload?.role === ROLE?.provider){
+      await ragService.ingestOneProvider(updateData?.id as string);
+    }
+      return {
       success: true,
       data:updateData,
       message: "User Registered Successfully",
@@ -151,6 +159,12 @@ const updateProfile = async (userdata:userType,payload:updateUserType) => {
   })
 
   if (updateData) {
+      if(updateData?.id && updateData?.role === ROLE.customer){
+      await ragService.ingestOneCustomer(updateData?.id as string);
+    }
+      if(updateData?.id && updateData?.role === ROLE?.provider){
+      await ragService.ingestOneProvider(updateData?.id as string);
+    }
     return { success: true,message:"profile updated successfully" ,data:{...updateData} };
   }
 

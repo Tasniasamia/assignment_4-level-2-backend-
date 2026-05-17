@@ -1,7 +1,9 @@
 import { USERSTATUS } from "../../../generated/prisma/enums";
 import type { UserWhereInput } from "../../../generated/prisma/models";
 import { prisma } from "../../lib/prisma";
+import { RagService } from "../rag/rag.service";
 
+const ragService=new RagService();
 const getAllUser = async (
   page: number,
   limit: number,
@@ -70,6 +72,7 @@ const updateStatus=async(data:{id:string})=>{
   })
   
  if(updateData){
+  await ragService.ingestOneAdmin(updateData?.id);
   return {
     success:true,
     message:'Status updated successfully',

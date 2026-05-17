@@ -5,13 +5,15 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider      = "prisma-client"
-  output        = "../generated/prisma"
-  binaryTargets = ["native", "rhel-openssl-3.0.x"]
+  provider        = "prisma-client"
+  output          = "../generated/prisma"
+  binaryTargets   = ["native", "rhel-openssl-3.0.x"]
+  previewFeatures = ["postgresqlExtensions"]   
 }
 
 datasource db {
-  provider = "postgresql"
+  provider   = "postgresql"
+  extensions = [vector]                         
 }
 
 enum ROLE {
@@ -191,4 +193,56 @@ model CartItem {
   quantity Int
 
   @@map("cart_items")
+}
+
+
+model documentEmbeddingAdmin{
+  id        String   @id @default(uuid(7))
+  chunkey   String @unique
+  sourceType String
+  sourceId String
+  sourceLabel String?
+  content String?
+  metadata Json?
+  embedding Unsupported("vector(2048)")
+  isDeleted Boolean @default(false)
+  deletedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([sourceType], name: "idx_admin_sourceType")
+  @@index([sourceId],   name: "idx_admin_sourceId")
+}
+
+model documentEmbeddingProvider{
+  id        String   @id @default(uuid(7))
+  chunkey   String @unique
+  sourceType String
+  sourceId String
+  sourceLabel String?
+  content String?
+  metadata Json?
+  embedding Unsupported("vector(2048)")
+  isDeleted Boolean @default(false)
+  deletedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([sourceType], name: "idx_provider_sourceType")
+  @@index([sourceId],   name: "idx_provider_sourceId")
+}
+
+model documentEmbeddingCustomer{
+  id        String   @id @default(uuid(7))
+  chunkey   String @unique
+  sourceType String
+  sourceId String
+  sourceLabel String?
+  content String?
+  metadata Json?
+  embedding Unsupported("vector(2048)")
+  isDeleted Boolean @default(false)
+  deletedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([sourceType], name: "idx_customer_sourceType")
+  @@index([sourceId],   name: "idx_customer_sourceId")
 }

@@ -1,9 +1,12 @@
 import { ORDERSTATUS, ROLE } from "../../../generated/prisma/enums";
 import { prisma } from "../../lib/prisma";
+import { RagService } from "../rag/rag.service";
 import type { CreateOrderPayload } from "./order.interface";
 
+const ragService=new RagService();
+
 const createOrder = async ({ userId, deliveryAddress }: CreateOrderPayload) => {
-  return await prisma.$transaction(async (tx) => {
+  const createOrders= await prisma.$transaction(async (tx) => {
     const cartItems = await tx.cartItem.findMany({
       where: {
         userId,
@@ -31,7 +34,7 @@ const createOrder = async ({ userId, deliveryAddress }: CreateOrderPayload) => {
       },
     });
 
-    await tx.cartItem.updateMany({
+   await tx.cartItem.updateMany({
       where: {
         userId,
         orderId: null,
@@ -53,7 +56,12 @@ const createOrder = async ({ userId, deliveryAddress }: CreateOrderPayload) => {
       message: "Order placed failed",
     };
   });
+   await ragService.ingestOneOrder(createOrders?.data?.id as string);
+  return createOrders;
 };
+
+
+
 const getOrder = async (
   page: number,
   limit: number,
@@ -174,6 +182,8 @@ const getOrder = async (
     data: null,
   };
 };
+
+
 const updateOrder = async (
   id: string,
   authenticator: {
@@ -237,6 +247,7 @@ const updateOrder = async (
     data:{status:status}
   });
     if (updateData) {
+      await ragService.ingestOneOrder(updateData?.id);
       return {
         success: true,
         data: updateData,
@@ -251,6 +262,7 @@ const updateOrder = async (
     message: "Order Status update failed",
   };
 };
+
 
 const getSingleOrder = async (id: string) => {
   const findOrder = await prisma.order.findUnique({
@@ -274,9 +286,12 @@ const getSingleOrder = async (id: string) => {
     data: null,
   };
 };
+
+
 const deleteOrder = async (id: string) => {
   const deleteOrder = await prisma.order.delete({ where: { id: id } });
   if (deleteOrder) {
+    await ragService.removeFromIndex(`order-${deleteOrder?.id}`, "documentEmbeddingAdmin");
     return { success: true, data: deleteOrder ,message:"Order deleted successfully"};
   }
   return {
@@ -285,6 +300,7 @@ const deleteOrder = async (id: string) => {
     message:"Order deletion failed"
   };
 };
+
 
 export const orderService = {
   createOrder,

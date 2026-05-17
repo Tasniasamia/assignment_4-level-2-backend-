@@ -1,7 +1,9 @@
 import { ORDERSTATUS } from "../../../generated/prisma/enums";
 import { prisma } from "../../lib/prisma"
+import { RagService } from "../rag/rag.service";
 import type { providerProfileType } from "./provider.interface";
 
+const ragService = new RagService();
 const updateOrCreateProvider=async(payload:providerProfileType)=>{
    const updateData = await prisma.providerProfiles.upsert({
         where: { userId: payload.userId },
@@ -27,6 +29,8 @@ const updateOrCreateProvider=async(payload:providerProfileType)=>{
       });
       
  if(updateData){
+     await ragService.ingestOneProvider(updateData?.id as string);
+
     return {
         success:true,
         data:updateData,

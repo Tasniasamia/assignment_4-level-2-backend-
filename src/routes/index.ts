@@ -7,6 +7,7 @@ import { mealRoute } from "../modules/meals/meals.route";
 import { cartRoute } from "../modules/cart/cart.route";
 import { orderRoute } from "../modules/order/order.route";
 import { reviewRoute } from "../modules/review/review.route";
+import { RagRoutes } from "../modules/rag/rag.route";
 
 
 const route=Router();
@@ -43,6 +44,10 @@ const allRoutes=[
     {
         path:'/review',
         handler:reviewRoute
+    },
+    {
+        path:"/rag",
+        handler:RagRoutes
     }
 ]
 allRoutes.forEach((i)=>route.use(i?.path,i?.handler))

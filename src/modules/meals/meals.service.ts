@@ -1,10 +1,15 @@
 import type { MealWhereInput } from "../../../generated/prisma/models";
 import { prisma } from "../../lib/prisma";
+import { RagService } from "../rag/rag.service";
 import type { MealType } from "./meals.interface";
+
+
+const ragService=new RagService();
 
 const addMeal = async (data: MealType) => {
   const insertdata = await prisma.meal.create({ data });
   if (insertdata?.id) {
+    await ragService.ingestOneMeal(insertdata?.id)
     return {
       success: true,
       message: "Meat added Successfully",
@@ -24,6 +29,8 @@ const updateMeal = async (id: string, data: MealType) => {
       where: { id: id },
       data: { ...data },
     });
+    await ragService.ingestOneMeal(updateData?.id)
+
     return {
       success: true,
       message: "Meal updated successfully",
@@ -40,6 +47,7 @@ const deleteMeal = async (id: string) => {
   const findCategory = await prisma.meal.findUnique({ where: { id: id } });
   if (findCategory) {
     const deleteData = await prisma.meal.delete({ where: { id: id } });
+await ragService.removeFromIndex(`meal-${deleteData?.id}`, "documentEmbeddingAdmin");
     return {
       success: true,
       message: "Meal deleted successfully",
